@@ -72,6 +72,9 @@ public class ActionButton : WorldPanel
 		// By default set use to false.
 		SetClass( "use", false );
 
+		if (Prop is IEnablerDisabler disabler)
+			disabler.Disable();
+
 		// By default glow width is zero (don't show.)
 		var glowWidth = 0f;
 		// If this entity is enabled then set the width based on distance.
@@ -88,6 +91,9 @@ public class ActionButton : WorldPanel
 				// Prop.Use();
 				// var usable = Prop as IUse;
 				usableProp.OnUse(player);
+
+				if (Prop is IEnablerDisabler enabler)
+					enabler.Enable();
 
 				SetClass( "use", true );
 			} else {

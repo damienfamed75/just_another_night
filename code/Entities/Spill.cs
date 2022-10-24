@@ -1,3 +1,4 @@
+using System.Linq;
 using Sandbox;
 using SandboxEditor;
 
@@ -74,6 +75,14 @@ public partial class Spill : ModelEntity, IUse
 			Button.Delete();
 			// Tell the server to delete this stain.
 			ConsoleSystem.Run( "delete_ent", Name );
+
+			var allSpills = All.OfType<Spill>().ToArray();
+
+			// If this is true then this is the last spill left on the map.
+			if (allSpills.Length == 1) {
+				// Move the player onto their next task.
+				ConsoleSystem.Run( "increment_task" );
+			}
 		}
 
 		return true;

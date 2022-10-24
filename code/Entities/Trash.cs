@@ -29,7 +29,6 @@ public partial class Trash : ModelEntity, IUse
 		Sound.FromEntity( "grab-item", user );
 
 		var allTrash = All.OfType<Trash>().ToArray();
-		Log.Info( allTrash.Length );
 		// If this is true then this is the last piece of trash left on the map.
 		if (allTrash.Length == 1) {
 			// Move the player onto their next task.

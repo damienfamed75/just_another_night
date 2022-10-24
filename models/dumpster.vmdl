@@ -14,12 +14,12 @@
 						remaps = 
 						[
 							{
-								from = "bag.vmat"
-								to = "materials/trash_bag.vmat"
+								from = "lid.vmat"
+								to = "materials/dumpster_lid.vmat"
 							},
 							{
-								from = "tie.vmat"
-								to = "materials/trash_tie.vmat"
+								from = "body.vmat"
+								to = "materials/dumpster_body.vmat"
 							},
 						]
 						use_global_default = false
@@ -33,10 +33,10 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/trash_bag.fbx"
-						import_translation = [ 0.0, 0.0, 29.0 ]
+						filename = "models/dumpster.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
-						import_scale = 0.6
+						import_scale = 0.1637
 						align_origin_x_type = "None"
 						align_origin_y_type = "None"
 						align_origin_z_type = "None"
@@ -46,8 +46,8 @@
 							exclude_by_default = true
 							exception_list = 
 							[
-								"Bag",
-								"Tie",
+								"Body",
+								"Lid",
 							]
 						}
 					},
@@ -60,7 +60,7 @@
 					{
 						_class = "PhysicsHullFromRender"
 						parent_bone = ""
-						surface_prop = "default"
+						surface_prop = "metal"
 						collision_tags = "solid"
 						faceMergeAngle = 20.0
 						maxHullVertices = 32

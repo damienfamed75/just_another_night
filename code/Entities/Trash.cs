@@ -32,9 +32,7 @@ public partial class Trash : ModelEntity, IUse
 		Log.Info( allTrash.Length );
 		// If this is true then this is the last piece of trash left on the map.
 		if (allTrash.Length == 1) {
-			var player = user as JustAnotherPlayer;
-			// Change the player's state to take out trash bags.
-			// player.State = JustAnotherPlayer.PlayerStates.TakeOutTrashBags;
+			// Move the player onto their next task.
 			ConsoleSystem.Run( "increment_task" );
 		}
 

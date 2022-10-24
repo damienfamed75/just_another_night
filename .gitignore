@@ -1,0 +1,6 @@
+**/base
+obj
+*.csproj
+**/.DS_Store
+**/Thumbs.db
+*.generated.*

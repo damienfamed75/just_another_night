@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using Sandbox;
 using Sandbox.Component;
@@ -15,6 +16,8 @@ public partial class JustAnotherPlayer : Player
 
 	WorldInput WorldInput = new();
 
+	const float WalkSpeed = 150f;
+
 	public enum PlayerStates
 	{
 		PickupTrash,
@@ -23,6 +26,11 @@ public partial class JustAnotherPlayer : Player
 		MopFloors,
 		FixIceCreamMachine,
 		OrganizeFreezer
+	}
+
+	public bool HasRoomForItem()
+	{
+		return ActiveChild == null;
 	}
 
 	public override void Spawn()
@@ -37,9 +45,9 @@ public partial class JustAnotherPlayer : Player
 		EnableShadowInFirstPerson = false;
 
 		Controller = new WalkController(){
-			SprintSpeed = 100,
-			WalkSpeed = 150,
-			DefaultSpeed = 150,
+			SprintSpeed = WalkSpeed - 50,
+			WalkSpeed = WalkSpeed,
+			DefaultSpeed = WalkSpeed,
 			AirAcceleration = 0,
 			StopSpeed = 50,
 			Gravity = 1000,
@@ -56,7 +64,30 @@ public partial class JustAnotherPlayer : Player
 	public override void Simulate( Client cl )
 	{
 		base.Simulate( cl );
+
+		// Get the current active controller.
+		if ( GetActiveController() is not WalkController ctrl )
+			return;
+
 		TickPlayerUse();
+
+		if (Input.ActiveChild != null) {
+			ActiveChild = Input.ActiveChild;
+		}
+
+		// Set some default speeds. (I don't like how I'm setting it every tick)
+		ctrl.DefaultSpeed = WalkSpeed;
+		ctrl.WalkSpeed = WalkSpeed;
+		ctrl.SprintSpeed = WalkSpeed - 50;
+
+		SimulateActiveChild( cl, ActiveChild );
+
+		// If we have something equipped then adjust our movement speeds.
+		if (ActiveChild != null) {
+			ctrl.DefaultSpeed = 100;
+			ctrl.WalkSpeed = 100;
+			ctrl.SprintSpeed = 50;
+		}
 	}
 
 	public override void BuildInput( InputBuilder input )

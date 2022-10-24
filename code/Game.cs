@@ -44,6 +44,27 @@ public partial class JustAnotherGame : Sandbox.Game
 		Log.Info( $"playerstate[{player.State}]" );
 	}
 
+	[ConCmd.Server("equip_ent")]
+	public static void EquipEntity(string name)
+	{
+		var player = ConsoleSystem.Caller.Pawn as JustAnotherPlayer;
+		var ent = All.OfType<Entity>().Where( x => x.Name == name ).First();
+
+		player.ActiveChild = ent;
+		ent.Owner = player;
+	}
+
+	[ConCmd.Server("unequip_ent")]
+	public static void UnEquipEntity()
+	{
+		var player = ConsoleSystem.Caller.Pawn as JustAnotherPlayer;
+		if (player.ActiveChild == null)
+			return;
+
+		player.ActiveChild.Delete();
+		player.ActiveChild = null;
+	}
+
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>

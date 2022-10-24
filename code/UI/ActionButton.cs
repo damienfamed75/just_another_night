@@ -72,12 +72,16 @@ public class ActionButton : WorldPanel
 		// By default set use to false.
 		SetClass( "use", false );
 
-		// If this entity is enabled then attempt to adjust the glow effect.
+		// By default glow width is zero (don't show.)
+		var glowWidth = 0f;
+		// If this entity is enabled then set the width based on distance.
 		if (enabled) {
-			if ( Prop.Components.TryGet( out Glow glow ) ) {
-				glow.Width = distance.LerpInverse( 100, 0 ) * 0.75f;
-			}
+			glowWidth = distance.LerpInverse( 75, 0 ) * 0.75f;
 		}
+
+		// If our prop has a glow effect then adjust its width.
+		if ( Prop.Components.TryGet( out Glow glow ) )
+			glow.Width = glowWidth;
 
 		if (Focused && tr.Entity != null && distance < 75) {
 			if (Input.Down(InputButton.PrimaryAttack)) {

@@ -22,7 +22,7 @@ actionbutton{
 		align-items: center;
 
 		background-color: rgba(#000000, 0.5);
-		border: 5px solid rgba(white, 0.5);
+		border: 5px solid rgba(white, 0.2);
 		border-radius: 45%;
 		backdrop-filter: blur(10);
 
@@ -46,7 +46,7 @@ actionbutton{
 	}
 
 	&.enabled{
-		opacity: 1;
+		opacity: .5;
 	}
 
 	&.use{

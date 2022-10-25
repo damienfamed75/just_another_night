@@ -65,6 +65,30 @@ public partial class JustAnotherGame : Sandbox.Game
 		player.ActiveChild = null;
 	}
 
+	[ConCmd.Admin("freezer_open")]
+	public static void OpenFreezerDoor()
+	{
+		var caller = ConsoleSystem.Caller.Pawn;
+		var freezerDoor = All.OfType<ControlledDoor>()
+			.Where( x => x.Tags.Has( "freezer_door" ) )
+			.First();
+
+		freezerDoor.Locked = false;
+		freezerDoor.OnUse( caller );
+		freezerDoor.Locked = true;
+	}
+
+	[ConCmd.Admin("back_open")]
+	public static void OpenBackDoor()
+	{
+		var caller = ConsoleSystem.Caller.Pawn;
+		var freezerDoor = All.OfType<ControlledDoor>()
+			.Where( x => x.Tags.Has( "back_door" ) )
+			.First();
+
+		freezerDoor.OnUse( caller );
+	}
+
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>

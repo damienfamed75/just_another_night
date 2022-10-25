@@ -4,12 +4,6 @@ Layer0
 {
 	shader "complex.vfx"
 
-	//---- PBR ----
-	F_SPECULAR 1
-
-	//---- Rendering ----
-	F_RENDER_BACKFACES 1
-
 	//---- Ambient Occlusion ----
 	g_flAmbientOcclusionDirectDiffuse "0.000"
 	g_flAmbientOcclusionDirectSpecular "0.000"
@@ -18,7 +12,7 @@ Layer0
 	//---- Color ----
 	g_flModelTintAmount "1.000"
 	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
-	TextureColor "materials/textures/icecream_bc.png"
+	TextureColor "materials/textures/faucet_bc.png"
 
 	//---- Fade ----
 	g_flFadeExponent "1.000"
@@ -31,13 +25,13 @@ Layer0
 	g_flDirectionalLightmapStrength "1.000"
 
 	//---- Metalness ----
-	g_flMetalness "0.203"
+	g_flMetalness "0.000"
 
 	//---- Normal ----
 	TextureNormal "materials/default/default_normal.tga"
 
 	//---- Roughness ----
-	TextureRoughness "[0.794000 0.794000 0.794000 0.000000]"
+	TextureRoughness "materials/default/default_rough.tga"
 
 	//---- Texture Coordinates ----
 	g_nScaleTexCoordUByModelScaleAxis "0"

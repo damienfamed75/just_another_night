@@ -3,14 +3,14 @@
 	data = 
 	{
 		UI = false
-		Volume = 0.5
+		Volume = 1
 		VolumeRandom = 0
-		Pitch = 1
-		PitchRandom = 0
+		Pitch = 0.9
+		PitchRandom = 0.1
 		Decibels = 70
 		Sounds = 
 		[
-			resource:"sounds/slow-door-open.vsnd",
+			resource:"sounds/door-close.vsnd",
 		]
 		SelectionMode = "Random"
 		MaximumDistance = 1143.9335

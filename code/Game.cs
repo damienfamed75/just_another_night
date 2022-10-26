@@ -20,6 +20,19 @@ public partial class JustAnotherGame : Sandbox.Game
 	[Net]
 	RealTimeSince TimeSinceClientJoined { get; set; }
 
+	Sound Violins { get; set; }
+	Sound Heartbeat { get; set; }
+	float EffectsVolume { get; set; }
+
+	[Net]
+	public bool LookingAtCreep { get; set; } = false;
+
+	[Net, Predicted]
+	public RealTimeSince TimeSinceStare { get; set; }
+
+	[Net, Predicted]
+	public RealTimeUntil TimeUntilDecayEffects { get; set; }
+
 	public JustAnotherGame()
 	{
 		if (IsServer) {
@@ -89,6 +102,14 @@ public partial class JustAnotherGame : Sandbox.Game
 		freezerDoor.OnUse( caller );
 	}
 
+	// [ConCmd.Admin("creep_anim")]
+	// public static void SetCreepAnim(string anim)
+	// {
+	// 	var creep = All.OfType<Creep>().First();
+	// 	if (creep != null)
+	// 		creep.SetAnimation( anim );
+	// }
+
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>
@@ -123,7 +144,10 @@ public partial class JustAnotherGame : Sandbox.Game
 	{
 		base.FrameSimulate( cl );
 
+
 		if (TimeSinceClientJoined > 5) {
+			var player = cl.Pawn as Player;
+
 			var effects = Map.Camera.FindOrCreateHook<Sandbox.Effects.ScreenEffects>();
 			effects.ChromaticAberration.Offset = new Vector3(0.0025f, 0.0025f, 0.001f);
 			effects.ChromaticAberration.Scale = 1.0f;
@@ -132,6 +156,136 @@ public partial class JustAnotherGame : Sandbox.Game
 			effects.FilmGrain.Intensity = 0.025f;
 			effects.Saturation = 1.35f;
 			effects.Pixelation = 0.10f;
+
+			// var creep = All.OfType<Creep>().FirstOrDefault();
+			// if (creep != null && creep.IsValid()) {
+			// 	var ray = new Ray(
+			// 		player.EyePosition, player.EyeRotation.Forward
+			// 	);
+
+			// 	var tr = Trace.Ray( ray, player.Position.Distance( creep.Position ) )
+			// 		.WithAnyTags("creep", "solid")
+			// 		.Run();
+
+			// 	DebugOverlay.ScreenText( $"{tr.EndPosition.Distance( creep.Position + Vector3.Up * 60f )}", new Vector2( 10, 10 ), 0, Color.Yellow );
+
+			// 	var distance = tr.EndPosition.Distance( creep.Position + Vector3.Up * 60f );
+
+			// 	if (distance < 1300.0f) {
+			// 		if (!LookingAtCreep) {
+			// 			Heartbeat = Sound.FromEntity( "heartbeat", player );
+			// 			Violins = Sound.FromEntity( "violins-loop", player );
+			// 			TimeSinceStare = 0;
+			// 			LookingAtCreep = true;
+			// 		}
+
+			// 		effects.Vignette.Intensity = (effects.Vignette.Intensity + Time.Delta / 4).Clamp( 0.0f, 0.6f );
+
+			// 		Violins.SetVolume( distance.LerpInverse( 1250.0f, 50f ) );
+			// 		Heartbeat.SetVolume( distance.LerpInverse( 1250.0f, 50f ) );
+			// 	} else {
+			// 		if (LookingAtCreep) {
+			// 			Heartbeat.Stop();
+			// 			Violins.Stop();
+			// 			TimeSinceStare = 0;
+			// 			LookingAtCreep = false;
+			// 		}
+
+			// 		effects.Vignette.Intensity = (effects.Vignette.Intensity - Time.Delta / 4).Clamp( 0.0f, 1.0f );
+			// 	}
+
+			// 	if (TimeSinceStare > 5) {
+
+			// 	}
+			// }
+			if (LookingAtCreep) {
+				effects.Vignette.Intensity = (effects.Vignette.Intensity + Time.Delta / 4).Clamp( 0.0f, 0.6f );
+
+				// EffectsVolume = TimeSinceStare / 5.0f;
+				// Heartbeat.SetVolume( EffectsVolume );
+				// Violins.SetVolume( EffectsVolume );
+			} else {
+				effects.Vignette.Intensity = (effects.Vignette.Intensity - Time.Delta / 4).Clamp( 0.0f, 1.0f );
+
+				EffectsVolume = (EffectsVolume - Time.Delta / 4).Clamp(0.0f, 1.0f);
+			}
+
+			Heartbeat.SetVolume( EffectsVolume );
+			Violins.SetVolume( EffectsVolume );
+
+			if (EffectsVolume == 0.0f) {
+				Heartbeat.Stop();
+				Violins.Stop();
+			}
+		}
+	}
+
+	[ClientRpc]
+	public void StartLookAtCreepEffects()
+	{
+		// Heartbeat = Sound.FromEntity( "heartbeat", Local.Pawn );
+		// Heartbeat.SetVolume( 0.0f );
+		// Violins = Sound.FromEntity( "violins-loop", Local.Pawn );
+		// Violins.SetVolume( 0.0f );
+	}
+
+	[ClientRpc]
+	public void StopLookAtCreepEffects()
+	{
+		// Heartbeat.Stop();
+		// Violins.Stop();
+	}
+
+	public override void Simulate( Client cl )
+	{
+		base.Simulate( cl );
+
+		foreach (var child in Children) {
+			child.Simulate( cl );
+		}
+
+		CheckForCreep( cl );
+	}
+
+	public void CheckForCreep(Client cl)
+	{
+		var player = cl.Pawn as Player;
+
+		if (Rand.Int(0,10) < 9) {
+			return;
+		}
+
+		var creep = All.OfType<Creep>().FirstOrDefault();
+		if (creep != null && creep.IsValid()) {
+			var ray = new Ray(
+				player.EyePosition, player.EyeRotation.Forward
+			);
+
+			var tr = Trace.Ray( ray, player.Position.Distance( creep.Position ) )
+				.WithAnyTags("creep", "solid")
+				.Run();
+
+			var distance = tr.EndPosition.Distance( creep.Position + Vector3.Up * 60f );
+
+			// Check to see if we can see him in our eye sight.
+			tr = Trace.Ray( player.EyePosition, creep.Position + Vector3.Up * 10f )
+				.WithAnyTags( "creep", "solid" )
+				.Run();
+
+			if (distance < 1000.0f && tr.Entity is Creep) {
+				if (!LookingAtCreep) {
+					creep.LookedAt();
+					StartLookAtCreepEffects();
+					TimeSinceStare = 0;
+					LookingAtCreep = true;
+				}
+			} else {
+				if (LookingAtCreep) {
+					StopLookAtCreepEffects();
+					TimeUntilDecayEffects = 5;
+					LookingAtCreep = false;
+				}
+			}
 		}
 	}
 }

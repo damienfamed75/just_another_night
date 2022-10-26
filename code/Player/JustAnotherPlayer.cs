@@ -75,6 +75,8 @@ public partial class JustAnotherPlayer : Player
 			ActiveChild = Input.ActiveChild;
 		}
 
+		CameraMode.ZNear = 2.5f;
+
 		// Set some default speeds. (I don't like how I'm setting it every tick)
 		ctrl.DefaultSpeed = WalkSpeed;
 		ctrl.WalkSpeed = WalkSpeed;
@@ -88,6 +90,8 @@ public partial class JustAnotherPlayer : Player
 			ctrl.WalkSpeed = 100;
 			ctrl.SprintSpeed = 50;
 		}
+
+		
 	}
 
 	public override void BuildInput( InputBuilder input )

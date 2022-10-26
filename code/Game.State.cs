@@ -36,11 +36,13 @@ public partial class JustAnotherGame
 			await WaitStateTimer();
 		}
 
+		// Initiate first customer
+		TrashStaringCreep();
+
 		GameState = GameStates.FirstCustomer;
 		StateTimer = Rand.Float( 10.0f, 15.0f );
 		await WaitStateTimer();
 
-		// Initiate first customer
 
 		while (player.State == JustAnotherPlayer.PlayerStates.TakeOutTrashBags) {
 			StateTimer = 1;
@@ -48,7 +50,12 @@ public partial class JustAnotherGame
 		}
 
 		GameState = GameStates.WeirdCustomer;
-		StateTimer = Rand.Float( 10.0f, 15.0f );
+		StateTimer = Rand.Float( 5.0f, 8.0f );
+		await WaitStateTimer();
+		// Delete the creep from staring down the path.
+		DeleteCreep();
+
+		StateTimer = Rand.Float( 1.0f, 2.0f );
 		await WaitStateTimer();
 
 		// initiate weird customer.
@@ -68,6 +75,7 @@ public partial class JustAnotherGame
 		await WaitStateTimer();
 
 		// initiate customer staring through windows.
+		StaringCreep();
 
 		while (player.State == JustAnotherPlayer.PlayerStates.MopFloors) {
 			StateTimer = 1;

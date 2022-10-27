@@ -31,6 +31,17 @@ public partial class JustAnotherGame
 		var client = All.OfType<Client>().First();
 		var player = client.Pawn as JustAnotherPlayer;
 
+		// var triggerPlacement = All.OfType<TriggerOnce>().Where( x => x.Tags.Has( "freezer_trigger" ) ).First();
+		// var trigger = new TriggerOnce();
+		// trigger.Owner = this;
+		// trigger.Parent = this;
+		// trigger.ActivationTags.Add( "player" );
+		// trigger.Position = triggerPlacement.Position;
+		// trigger.Spawn();
+		// trigger.SetupPhysicsFromAABB( PhysicsMotionType.Keyframed,
+		// 	triggerPlacement.CollisionBounds.Mins, triggerPlacement.CollisionBounds.Maxs );
+		// trigger.ActivationTags.Add( "player" );
+
 		while (player.State == JustAnotherPlayer.PlayerStates.PickupTrash) {
 			StateTimer = 1;
 			await WaitStateTimer();
@@ -71,7 +82,7 @@ public partial class JustAnotherGame
 
 		// initiate second normal customer.
 
-		StateTimer = Rand.Float( 20.0f, 25.0f );
+		StateTimer = Rand.Float( 1.0f, 5.0f );
 		await WaitStateTimer();
 
 		// initiate customer staring through windows.
@@ -87,6 +98,11 @@ public partial class JustAnotherGame
 		await WaitStateTimer();
 
 		// initiate back door opening.
+		var backDoor = All.OfType<ControlledDoor>()
+			.Where( x => x.Tags.Has( "back_door" ) )
+			.First();
+
+		backDoor.OnUse( player );
 
 		while (player.State == JustAnotherPlayer.PlayerStates.FixIceCreamMachine) {
 			StateTimer = 1;
@@ -98,6 +114,7 @@ public partial class JustAnotherGame
 		await WaitStateTimer();
 
 		// initiate freezer door opening and guy waiting in freezer.
+		FreezerCreep();
 
 		// Find the freezer door. The map should only have one.
 		var freezerDoor = All.OfType<ControlledDoor>()
@@ -110,6 +127,11 @@ public partial class JustAnotherGame
 		freezerDoor.OnUse( player );
 		// Lock the door again so the player cannot use it.
 		freezerDoor.Locked = true;
+
+		while (player.State == JustAnotherPlayer.PlayerStates.OrganizeFreezer) {
+			StateTimer = 1;
+			await WaitStateTimer();
+		}
 	}
 
 	private async Task WaitStateTimer()

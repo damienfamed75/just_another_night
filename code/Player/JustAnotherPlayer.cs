@@ -14,6 +14,17 @@ public partial class JustAnotherPlayer : Player
 	[Net]
 	public RealTimeSince EventTimer { get; set; }
 
+	[Net]
+	public bool Incapacitated { get; set; }
+
+	public bool PrevIncapacitated { get; set; }
+
+	[Net]
+	public RealTimeUntil TimeUntilDeath { get; set; }
+
+	[Net]
+	public bool PlayedDeathSound { get; set; } = false;
+
 	WorldInput WorldInput = new();
 
 	const float WalkSpeed = 150f;
@@ -39,6 +50,13 @@ public partial class JustAnotherPlayer : Player
 
 		SetModel( "models/citizen/citizen.vmdl" );
 
+		// BBox box = BBox.FromHeightAndRadius( 70.0f, 18.0f );
+		// BBox box = BBox.FromHeightAndRadius( 10.0f, 12.0f );
+
+		// SetupPhysicsFromAABB( PhysicsMotionType.Keyframed, box.Mins + EyePosition + Vector3.Up * 5f, box.Maxs + EyePosition + Vector3.Up * 5f );
+		Capsule cap = Capsule.FromHeightAndRadius( 10, 10f );
+		SetupPhysicsFromCylinder( PhysicsMotionType.Keyframed, cap );
+
 		EnableDrawing = true;
 		EnableHideInFirstPerson = true;
 		// Don't show how the citizen looks idk.
@@ -59,10 +77,44 @@ public partial class JustAnotherPlayer : Player
 
 		State = PlayerStates.PickupTrash;
 		EventTimer = 0;
+
+		Tags.Add( "player" );
 	}
 
 	public override void Simulate( Client cl )
 	{
+		if (Incapacitated && !PrevIncapacitated) {
+			EnableDrawing = false;
+			Controller = null;
+			Animator = null;
+			CameraMode = new DeathCamera();
+			TimeUntilDeath = 8;
+			// CameraMode.Position = EyePosition;
+			// CameraMode.Rotation = EyeRotation;
+			// Sound.FromScreen( To.Single(cl), "death" );
+			Sound.FromWorld( "death", EyePosition );
+
+			PrevIncapacitated = Incapacitated;
+		}
+		if (Incapacitated) {
+			// var creep = All.OfType<Creep>().First();
+			CameraMode.ZNear = 1f;
+
+			if (TimeUntilDeath < 3.5f && !PlayedDeathSound) {
+				if (IsServer) {
+					Sound.FromEntity( "end_game", this );
+					PlayedDeathSound = true;
+				}
+			}
+			// if (Sound.Listener == null) {
+			// 	Sound.Listener = Transform;
+			// }
+
+			// Sound.Listener = Transform.WithPosition(
+			// 	Sound.Listener.Value.Position - Vector3.Down * .5f
+			// );
+		}
+
 		base.Simulate( cl );
 
 		// Get the current active controller.
@@ -90,8 +142,6 @@ public partial class JustAnotherPlayer : Player
 			ctrl.WalkSpeed = 100;
 			ctrl.SprintSpeed = 50;
 		}
-
-		
 	}
 
 	public override void BuildInput( InputBuilder input )

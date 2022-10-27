@@ -40,6 +40,12 @@ public partial class JustAnotherGame
 		Log.Info( "spawned creep" );
 	}
 
+	public void FreezerCreep()
+	{
+		var creep = SpawnCreep( "creep_freezer" );
+		creep.State = Creep.CreepStates.Kill;
+	}
+
 	/// <summary>
 	/// Do not use this.
 	/// </summary>

@@ -95,11 +95,18 @@ public partial class JustAnotherGame : Sandbox.Game
 	public static void OpenBackDoor()
 	{
 		var caller = ConsoleSystem.Caller.Pawn;
-		var freezerDoor = All.OfType<ControlledDoor>()
+		var backDoor = All.OfType<ControlledDoor>()
 			.Where( x => x.Tags.Has( "back_door" ) )
 			.First();
 
-		freezerDoor.OnUse( caller );
+		backDoor.OnUse( caller );
+	}
+
+	[ConCmd.Admin("death")]
+	public static void DeathSpawn()
+	{
+		OpenFreezerDoor();
+		(Current as JustAnotherGame).FreezerCreep();
 	}
 
 	// [ConCmd.Admin("creep_anim")]
@@ -146,16 +153,18 @@ public partial class JustAnotherGame : Sandbox.Game
 
 
 		if (TimeSinceClientJoined > 5) {
-			var player = cl.Pawn as Player;
+			var player = cl.Pawn as JustAnotherPlayer;
 
 			var effects = Map.Camera.FindOrCreateHook<Sandbox.Effects.ScreenEffects>();
-			effects.ChromaticAberration.Offset = new Vector3(0.0025f, 0.0025f, 0.001f);
+			// effects.ChromaticAberration.Offset = new Vector3(0.0025f, 0.0025f, 0.001f);
 			effects.ChromaticAberration.Scale = 1.0f;
 			effects.Contrast = 1.015f;
 			effects.FilmGrain.Response = 1f;
 			effects.FilmGrain.Intensity = 0.025f;
 			effects.Saturation = 1.35f;
-			effects.Pixelation = 0.10f;
+			// effects.Pixelation = 0.10f;
+			effects.Pixelation = 0.15f;
+			// effects.Pixelation = 0.20f;
 
 			// var creep = All.OfType<Creep>().FirstOrDefault();
 			// if (creep != null && creep.IsValid()) {
@@ -198,16 +207,32 @@ public partial class JustAnotherGame : Sandbox.Game
 
 			// 	}
 			// }
-			if (LookingAtCreep) {
-				effects.Vignette.Intensity = (effects.Vignette.Intensity + Time.Delta / 4).Clamp( 0.0f, 0.6f );
+			if (LookingAtCreep || player.Incapacitated) {
+				var delta = Time.Delta / 4f;
+
+				effects.Vignette.Intensity = (effects.Vignette.Intensity + delta).Clamp( 0.0f, 0.6f );
+
+				effects.ChromaticAberration.Offset = new Vector3(
+					(effects.ChromaticAberration.Offset.x + delta/75).Clamp( 0.0025f, 0.005f ),
+					(effects.ChromaticAberration.Offset.y + delta/75).Clamp( 0.0025f, 0.01f ),
+					(effects.ChromaticAberration.Offset.z + delta/75).Clamp( 0.001f, 0.015f )
+				);
 
 				// EffectsVolume = TimeSinceStare / 5.0f;
 				// Heartbeat.SetVolume( EffectsVolume );
 				// Violins.SetVolume( EffectsVolume );
 			} else {
-				effects.Vignette.Intensity = (effects.Vignette.Intensity - Time.Delta / 4).Clamp( 0.0f, 1.0f );
+				var delta = Time.Delta / 4f;
 
-				EffectsVolume = (EffectsVolume - Time.Delta / 4).Clamp(0.0f, 1.0f);
+				effects.Vignette.Intensity = (effects.Vignette.Intensity - delta).Clamp( 0.0f, 1.0f );
+
+				effects.ChromaticAberration.Offset = new Vector3(
+					(effects.ChromaticAberration.Offset.x - delta/75).Clamp( 0.0025f, 1.0f ),
+					(effects.ChromaticAberration.Offset.y - delta/75).Clamp( 0.0025f, 1.0f ),
+					(effects.ChromaticAberration.Offset.z - delta/75).Clamp( 0.001f, 1.0f )
+				);
+
+				// EffectsVolume = (EffectsVolume - Time.Delta / 4).Clamp(0.0f, 1.0f);
 			}
 
 			Heartbeat.SetVolume( EffectsVolume );
@@ -242,6 +267,14 @@ public partial class JustAnotherGame : Sandbox.Game
 
 		foreach (var child in Children) {
 			child.Simulate( cl );
+
+			if (child is not Creep creep)
+				continue;
+
+			if (creep.Finished) {
+				creep.Delete();
+				break;
+			}
 		}
 
 		CheckForCreep( cl );
@@ -266,13 +299,16 @@ public partial class JustAnotherGame : Sandbox.Game
 				.Run();
 
 			var distance = tr.EndPosition.Distance( creep.Position + Vector3.Up * 60f );
+			var angle = Vector3.GetAngle( player.EyeRotation.Forward, creep.Position - player.EyePosition );
 
 			// Check to see if we can see him in our eye sight.
-			tr = Trace.Ray( player.EyePosition, creep.Position + Vector3.Up * 10f )
+			tr = Trace.Ray( player.EyePosition + player.EyeRotation.Forward * 10f, creep.Position + Vector3.Up * 10f )
 				.WithAnyTags( "creep", "solid" )
 				.Run();
 
-			if (distance < 1000.0f && tr.Entity is Creep) {
+			// DebugOverlay.TraceResult( tr );
+
+			if (distance < 1000.0f && tr.Entity is Creep && angle < 60.0f) {
 				if (!LookingAtCreep) {
 					creep.LookedAt();
 					StartLookAtCreepEffects();

@@ -25,6 +25,9 @@ public partial class JustAnotherPlayer : Player
 	[Net]
 	public bool PlayedDeathSound { get; set; } = false;
 
+	[Net]
+	public Vector3 DeathCameraPos { get; set; }
+
 	WorldInput WorldInput = new();
 
 	const float WalkSpeed = 150f;
@@ -88,10 +91,11 @@ public partial class JustAnotherPlayer : Player
 			Controller = null;
 			Animator = null;
 			CameraMode = new DeathCamera();
+			var creep = All.OfType<Creep>().First();
+
+			DeathCameraPos = (creep.Position + creep.Rotation.Forward * 25f).WithZ( EyePosition.z );
 			TimeUntilDeath = 8;
-			// CameraMode.Position = EyePosition;
-			// CameraMode.Rotation = EyeRotation;
-			// Sound.FromScreen( To.Single(cl), "death" );
+
 			Sound.FromWorld( "death", EyePosition );
 
 			PrevIncapacitated = Incapacitated;
@@ -158,6 +162,10 @@ public partial class JustAnotherPlayer : Player
 
 	public override float FootstepVolume()
 	{
+		if (Incapacitated) {
+			return 0f;
+		}
+
 		return Velocity.WithZ( 0 ).Length.LerpInverse( 0, 200f ) * 10f;
 	}
 }

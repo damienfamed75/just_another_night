@@ -20,6 +20,9 @@ public partial class Creep : AnimatedMapEntity
 	[Net]
 	public bool HasBeenLookedAt { get; set; } = false;
 
+	[Net]
+	public int TimesKilled { get; set; }
+
 	public bool BeingLookedAt => (Game.Current as JustAnotherGame).LookingAtCreep;
 
 	public RealTimeSince TimeSinceLookedAt => (Game.Current as JustAnotherGame).TimeSinceStare;
@@ -109,9 +112,18 @@ public partial class Creep : AnimatedMapEntity
 
 		if ((CurrentSequence.Name != "killing" && CurrentSequence.Name != "kill") || CurrentSequence.IsFinished) {
 			Log.Info( $"curr[{CurrentSequence.Name}]" );
+			if (TimesKilled > 5) {
+				return;
+			}
+
+			TimesKilled++;
 			PlaybackRate = 1.5f;
 			DirectPlayback.Play( "killing" );
 			SetAnimation( "killing" );
+		}
+
+		if (IsServer) {
+			Position += Rotation.Backward * 0.05f * TimesKilled;
 		}
 	}
 
@@ -172,7 +184,9 @@ public partial class Creep : AnimatedMapEntity
 			// 	.Run();
 			var distance = Position.Distance( player.Position );
 
-			if (distance < 32) {
+			// Log.Info( distance );
+
+			if (distance < 50) {
 				// Kill player
 				Log.Info( "DEATH" );
 				State = CreepStates.DeathScreen;

@@ -15,6 +15,21 @@ public class DeathUI : Panel
 		GameLogo.Style.BackgroundImage = Texture.Load( FileSystem.Mounted, "images/logo.png" );
 
 		Credits = AddChild<Label>( "credits" );
+		Credits.SetText(
+@"created by:
+Damien#0812
+
+sounds sampled from:
+Breviceps
+Fawfulgrox
+ERH
+Nicolas Drweski
+InspectorJ
+LennyBoy
+RiverNile
+Nachtmahrtv
+YFJesse"
+);
 
 		Style.Opacity = 0f;
 	}
@@ -32,6 +47,9 @@ public class DeathUI : Panel
 		Style.Opacity = Opacity;
 
 		GameLogo.SetClass( "active", player.TimeUntilDeath < -1.25f );
+
+		Credits.SetClass( "scroll", player.TimeUntilDeath < -2.25f );
+		GameLogo.SetClass( "fadeout", player.TimeUntilDeath < -2.5f );
 
 		// Log.Info( player.TimeUntilDeath );
 		// SetClass( "active", player.TimeUntilDeath < 0 );

@@ -23,7 +23,8 @@ public class DeathCamera : CameraMode
 		var creep = Entity.All.OfType<Creep>().First();
 		var offset = new Vector3( 0, 0, 62 );
 
-		Position = Pawn.EyePosition;
+		// Position = Pawn.EyePosition;
+		Position = (Pawn as JustAnotherPlayer).DeathCameraPos;
 
 		// FieldOfView = 65;
 		FieldOfView = (FieldOfView - TimeSinceCreated * 2f).Clamp(60, 90);

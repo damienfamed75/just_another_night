@@ -265,6 +265,15 @@ public partial class JustAnotherGame : Sandbox.Game
 	{
 		base.Simulate( cl );
 
+		var player = cl.Pawn as JustAnotherPlayer;
+		if (player.Incapacitated && player.TimeUntilDeath < -30f) {
+			if (IsServer) {
+				cl.Kick();
+
+				return;
+			}
+		}
+
 		foreach (var child in Children) {
 			child.Simulate( cl );
 

@@ -19,7 +19,7 @@ public class Intro : Panel
 	{
 		base.Tick();
 
-		if (TimeSinceCreated > 1) {
+		if (TimeSinceCreated > 5) {
 			Delete();
 		}
 	}

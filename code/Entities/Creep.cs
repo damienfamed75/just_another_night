@@ -167,6 +167,7 @@ public partial class Creep : AnimatedMapEntity
 				if (!Position.AlmostEqual(dest, 1f)) {
 					Position += (dest - Position) / 100f;
 				} else {
+					car.StopSounds();
 					Finished = true;
 				}
 			} else {

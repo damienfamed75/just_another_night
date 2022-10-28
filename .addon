@@ -2,8 +2,8 @@
   "Title": "Just Another Night",
   "Type": "game",
   "Org": "gimlet",
-  "Ident": "just_another_night",
-  "Tags": "",
+  "Ident": "a_night",
+  "Tags": "horror",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -25,9 +25,9 @@
     "MaxPlayers": 1,
     "MinPlayers": 1,
     "GameNetworkType": "Singleplayer",
-    "MapSelect": "Hidden",
+    "MapSelect": "Tagged",
     "MapList": [
-      "gimlet.justanotherrestaurant"
+      "gimlet.restaurant"
     ],
     "RankType": "None",
     "PerMapRanking": false,

@@ -34,6 +34,12 @@ public partial class Car : ModelEntity, IUse
 		Tags.Add( "car" );
 	}
 
+	[ClientRpc]
+	public void StopSounds()
+	{
+		RevSound.Stop();
+	}
+
 	public override void Spawn()
 	{
 		base.Spawn();

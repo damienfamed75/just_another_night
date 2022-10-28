@@ -33,6 +33,9 @@ public partial class JustAnotherGame : Sandbox.Game
 	[Net, Predicted]
 	public RealTimeUntil TimeUntilDecayEffects { get; set; }
 
+	[Net]
+	public bool WaitingCustomer { get; set; }
+
 	public JustAnotherGame()
 	{
 		if (IsServer) {
@@ -102,11 +105,23 @@ public partial class JustAnotherGame : Sandbox.Game
 		backDoor.OnUse( caller );
 	}
 
+	[ClientRpc]
+	private void SayCustomerArrived()
+	{
+		SelfSpeak.Current.SayCustomerArrive();
+	}
+
 	[ConCmd.Admin("death")]
 	public static void DeathSpawn()
 	{
 		OpenFreezerDoor();
 		(Current as JustAnotherGame).FreezerCreep();
+	}
+
+	[ConCmd.Admin("spawn_customer")]
+	public static void TestingSpawnCustomer(int group)
+	{
+		(Current as JustAnotherGame).SpawnCustomer(group);
 	}
 
 	// [ConCmd.Admin("creep_anim")]
@@ -207,6 +222,7 @@ public partial class JustAnotherGame : Sandbox.Game
 
 			// 	}
 			// }
+
 			if (LookingAtCreep || player.Incapacitated) {
 				var delta = Time.Delta / 4f;
 
@@ -280,16 +296,18 @@ public partial class JustAnotherGame : Sandbox.Game
 			if (child is not Creep creep)
 				continue;
 
+			CheckForCreep( cl, creep );
+
 			if (creep.Finished) {
 				creep.Delete();
 				break;
 			}
 		}
 
-		CheckForCreep( cl );
+		// CheckForCreep( cl );
 	}
 
-	public void CheckForCreep(Client cl)
+	public void CheckForCreep(Client cl, Creep creep)
 	{
 		var player = cl.Pawn as Player;
 
@@ -297,8 +315,18 @@ public partial class JustAnotherGame : Sandbox.Game
 			return;
 		}
 
-		var creep = All.OfType<Creep>().FirstOrDefault();
+		// var creep = All.OfType<Creep>().FirstOrDefault();
+
+
 		if (creep != null && creep.IsValid()) {
+			// If the creep is in a car then don't trigger any effects.
+			// if (creep.State == Creep.CreepStates.Car) {
+			// 	creep.LookedAt();
+			// 	TimeSinceStare = 0;
+
+			// 	return;
+			// }
+
 			var ray = new Ray(
 				player.EyePosition, player.EyeRotation.Forward
 			);
@@ -315,18 +343,15 @@ public partial class JustAnotherGame : Sandbox.Game
 				.WithAnyTags( "creep", "solid" )
 				.Run();
 
-			// DebugOverlay.TraceResult( tr );
-
 			if (distance < 1000.0f && tr.Entity is Creep && angle < 60.0f) {
 				if (!LookingAtCreep) {
 					creep.LookedAt();
-					StartLookAtCreepEffects();
 					TimeSinceStare = 0;
-					LookingAtCreep = true;
+					if (creep.State != Creep.CreepStates.Car)
+						LookingAtCreep = true;
 				}
 			} else {
 				if (LookingAtCreep) {
-					StopLookAtCreepEffects();
 					TimeUntilDecayEffects = 5;
 					LookingAtCreep = false;
 				}

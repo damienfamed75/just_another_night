@@ -26,6 +26,9 @@ public partial class Trash : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
+		if (IsServer)
+			return false;
+
 		Sound.FromEntity( "grab-item", user );
 
 		var allTrash = All.OfType<Trash>().ToArray();

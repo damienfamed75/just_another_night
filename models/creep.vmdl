@@ -36,9 +36,43 @@
 								from = "body.vmat"
 								to = "materials/creep.vmat"
 							},
+							{
+								from = "handle.vmat"
+								to = "materials/knife_handle.vmat"
+							},
+							{
+								from = "blade.vmat"
+								to = "materials/knife_blade.vmat"
+							},
 						]
 						use_global_default = false
 						global_default_material = ""
+					},
+					{
+						_class = "MaterialGroup"
+						name = "FirstCustomer"
+						remaps = 
+						[
+							{
+								from = "materials/creep.vmat"
+								to = "materials/customer1.vmat"
+							},
+							{
+								from = "materials/creep_glasses.vmat"
+								to = "materials/creep_glasses.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "SecondCustomer"
+						remaps = 
+						[
+							{
+								from = "materials/creep.vmat"
+								to = "materials/customer2.vmat"
+							},
+						]
 					},
 				]
 			},
@@ -99,6 +133,10 @@
 							]
 						}
 					},
+					{
+						_class = "Prefab"
+						target_file = "models/prefabs/knife.vmdl_prefab"
+					},
 				]
 			},
 			{
@@ -150,11 +188,19 @@
 					{
 						_class = "AnimFile"
 						name = "sit"
+						children = 
+						[
+							{
+								_class = "AnimOffset"
+								translation = [ 0.0, 0.0, 5.0 ]
+								rotation_xyz = [ 0.0, 0.0, 0.0 ]
+							},
+						]
 						activity_name = ""
 						activity_weight = 1
 						weight_list_name = ""
 						fade_in_time = 0.2
-						fade_out_time = 0.2
+						fade_out_time = 10.0
 						looping = true
 						delta = false
 						worldSpace = false
@@ -307,7 +353,7 @@
 						[
 							{
 								_class = "AnimEvent"
-								event_class = "AE_CL_PLAYSOUND"
+								event_class = "AE_CL_PLAYSOUND_POSITION"
 								event_frame = 24
 								event_keys = 
 								{
@@ -330,6 +376,64 @@
 						anim_markup_ordered = false
 						disable_compression = false
 						source_filename = "anim/creep@killing.fbx"
+						start_frame = -1
+						end_frame = -1
+						framerate = -1.0
+						take = 0
+						reverse = false
+					},
+					{
+						_class = "AnimFile"
+						name = "sit1"
+						children = 
+						[
+							{
+								_class = "AnimOffset"
+								translation = [ 0.0, 0.0, 5.0 ]
+								rotation_xyz = [ 0.0, 0.0, 0.0 ]
+							},
+						]
+						activity_name = ""
+						activity_weight = 1
+						weight_list_name = ""
+						fade_in_time = 0.2
+						fade_out_time = 0.2
+						looping = false
+						delta = false
+						worldSpace = false
+						hidden = false
+						anim_markup_ordered = false
+						disable_compression = false
+						source_filename = "anim/creep@sit1.fbx"
+						start_frame = -1
+						end_frame = -1
+						framerate = -1.0
+						take = 0
+						reverse = false
+					},
+					{
+						_class = "AnimFile"
+						name = "sit2"
+						children = 
+						[
+							{
+								_class = "AnimOffset"
+								translation = [ 0.0, 0.0, 5.0 ]
+								rotation_xyz = [ 0.0, 0.0, 0.0 ]
+							},
+						]
+						activity_name = ""
+						activity_weight = 1
+						weight_list_name = ""
+						fade_in_time = 0.2
+						fade_out_time = 0.2
+						looping = false
+						delta = false
+						worldSpace = false
+						hidden = false
+						anim_markup_ordered = false
+						disable_compression = false
+						source_filename = "anim/creep@sit2.fbx"
 						start_frame = -1
 						end_frame = -1
 						framerate = -1.0

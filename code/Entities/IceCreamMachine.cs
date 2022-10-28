@@ -39,6 +39,14 @@ public partial class IceCreamMachine : ModelEntity, IUse, IEnablerDisabler
 
 	public bool OnUse( Entity user )
 	{
+		if (IsServer)
+			return false;
+
+		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+			SelfSpeak.Current.SayCustomerWaiting();
+			return false;
+		}
+
 		Progress += (10 * Time.Delta).Clamp( 0.0f, 100.0f );
 
 		if (Progress > 99f && !Finished) {

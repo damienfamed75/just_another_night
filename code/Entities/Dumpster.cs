@@ -40,6 +40,9 @@ public partial class Dumpster : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
+		if (IsServer)
+			return false;
+
 		var player = user as JustAnotherPlayer;
 		// Double check the player has something in their hands.
 		if (player.ActiveChild == null)

@@ -43,6 +43,14 @@ public partial class Dishes : ModelEntity, IUse, IEnablerDisabler
 
 	public bool OnUse( Entity user )
 	{
+		if (IsServer)
+			return false;
+
+		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+			SelfSpeak.Current.SayCustomerWaiting();
+			return false;
+		}
+
 		// Add to the progress
 		Progress += (12 * Time.Delta).Clamp( 0.0f, 100f );
 		Particles.Create( "particles/soap.vpcf", Position );

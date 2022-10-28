@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class JustAnotherGame
 {
@@ -46,13 +47,63 @@ public partial class JustAnotherGame
 		creep.State = Creep.CreepStates.Kill;
 	}
 
+	private async Task WaitUntilCustomerIsGone()
+	{
+		while (WaitingCustomer) {
+			StateTimer = 1;
+			await WaitStateTimer();
+		}
+	}
+
+	public async Task FirstNormalCustomer()
+	{
+		await WaitUntilCustomerIsGone();
+		// Put the creep in the seat of the car.
+		// creep.Transform = car.GetSeatPosition();
+		SpawnCustomer( 1 );
+	}
+
+	public async Task CreepCustomer()
+	{
+		await WaitUntilCustomerIsGone();
+		// The creep's material group skin is default so it's zero.
+		SpawnCustomer( 0 );
+	}
+
+	public async Task SecondNormalCustomer()
+	{
+		await WaitUntilCustomerIsGone();
+		SpawnCustomer( 2 );
+	}
+
+	private void SpawnCustomer(int group = 0)
+	{
+		var creep = SpawnCreep( "car_spawn", group );
+		creep.State = Creep.CreepStates.Car;
+		creep.Position += Rotation.Forward * 200f;
+
+		var car = new Car {
+			Parent = creep,
+			Driving = true,
+			MaterialGroup = group
+		};
+		// Move the car to the creep.
+		car.Transform = creep.Transform;
+
+		car.Spawn();
+
+		WaitingCustomer = true;
+		SayCustomerArrived();
+	}
+
 	/// <summary>
 	/// Do not use this.
 	/// </summary>
-	private Creep SpawnCreep(string locationTag)
+	private Creep SpawnCreep(string locationTag, int matGroup = 0)
 	{
 		var creep = new Creep {
-			Parent = this
+			Parent = this,
+			MaterialGroup = matGroup
 		};
 
 		var spawnpoint = All.OfType<NPCSpawn>()

@@ -3,10 +3,21 @@
   "Type": "game",
   "Org": "gimlet",
   "Ident": "just_another_night",
+  "Tags": "",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "ResourcePaths": [],
+  "ResourcePaths": [
+    "/models/*",
+    "/models/prefabs/*",
+    "/models/creep/*",
+    "/models/empty_door/*",
+    "/anim/*",
+    "/images/*",
+    "/materials/*",
+    "/particles/*",
+    "/sounds/*"
+  ],
   "HasCode": true,
   "CodePath": "/code/",
   "RootNamespace": null,
@@ -25,6 +36,7 @@
     "GameCategory": "Horror",
     "ControlModes": {
       "Keyboard": true
-    }
+    },
+    "ParentPackage": ""
   }
 }

@@ -1,0 +1,99 @@
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+HEADER
+{
+	Description = "PS1 Style Shader Hopefully";
+
+	DevShader = true;
+}
+
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+// FEATURES
+// {
+//     #include "common/features.hlsl"
+// }
+
+//=========================================================================================================================
+COMMON
+{
+	#include "common/shared.hlsl"
+}
+
+//=========================================================================================================================
+
+struct VertexInput
+{
+	#include "common/vertexinput.hlsl"
+};
+
+//=========================================================================================================================
+
+struct PixelInput
+{
+	#include "common/pixelinput.hlsl"
+};
+
+//=========================================================================================================================
+
+VS
+{
+	#include "common/vertex.hlsl"
+	#include "common.fxc"
+
+	// VAR1 = vec4(UV * VERTEX.z,VERTEX.z,0);
+
+	//
+	// Main
+	//
+	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
+	{
+
+		PixelInput o = ProcessVertex( i );
+		// Add your vertex manipulation functions here
+
+		return FinalizeVertex( o );
+	}
+
+}
+
+//=========================================================================================================================
+
+// PS
+// {
+//     #include "common/pixel.hlsl"
+
+// 	// DIFFUSE=tex(imagem, VAR1.xy/VAR1.z).rgb;
+
+// 	//
+// 	// Main
+// 	//
+// 	float4 MainPs( PixelInput i ) : SV_Target0
+// 	{
+// 		Material m = GatherMaterial( i );
+// 		/* m.Metalness = 1.3f; // Forces the object to be metalic */
+// 		return FinalizePixelMaterial( i, m );
+// 	}
+// }
+
+// void vertex() {
+// 	vec4 view_space = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
+// 	affine_uv = vec4(UV * view_space.z, view_space.z, 0.0);
+// }
+
+PS
+{
+	#include "common/pixel.hlsl"
+	
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{
+		// Gather our texture inputs and convert them to the material struct
+		Material m = GatherMaterial( i );
+		// Force our object to be metallic
+		// m.Metalness = 1.3f;
+		// Shade our surface with lighting
+		return FinalizePixelMaterial( i, m );
+	}
+}

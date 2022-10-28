@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -21,11 +22,20 @@ public partial class Creep : AnimatedMapEntity
 	public bool HasBeenLookedAt { get; set; } = false;
 
 	[Net]
-	public int TimesKilled { get; set; }
+	public int TimesKilled { get; set; } = 0;
+
+	[Net]
+	public int MaterialGroup { get; set; } = 0;
+
+	[Net]
+	public bool HasDialogued { get; set; } = false;
 
 	public bool BeingLookedAt => (Game.Current as JustAnotherGame).LookingAtCreep;
 
 	public RealTimeSince TimeSinceLookedAt => (Game.Current as JustAnotherGame).TimeSinceStare;
+
+	[Net]
+	public RealTimeSince CarSinceLookedAt { get; set; }
 
 	NavPath Path;
 
@@ -34,7 +44,8 @@ public partial class Creep : AnimatedMapEntity
 		TakeOutTrashBags,
 		WatchOutsideBuilding,
 		Kill,
-		DeathScreen
+		DeathScreen,
+		Car,
 	}
 
 	public Creep()
@@ -54,6 +65,9 @@ public partial class Creep : AnimatedMapEntity
 		// EnableAllCollisions = true;
 
 		SpawnLocation = Position;
+
+		if (MaterialGroup != 0)
+			SetMaterialGroup( MaterialGroup );
 	}
 
 	public override void Simulate( Client cl )
@@ -76,12 +90,93 @@ public partial class Creep : AnimatedMapEntity
 			case CreepStates.DeathScreen:
 				DeathSimulate( cl );
 				break;
+			case CreepStates.Car:
+				CarSimulate( cl );
+				break;
 			default:
 				break;
 		}
 
+		// DebugOverlay.Sphere(
+		// 	Position + Vector3.Up * 45f + Rotation.Left * 36f,
+		// 	5f, Color.Red
+		// );
+
 		PrevHasBeenLookedAt = HasBeenLookedAt;
 		// Rotation = Rotation.LookAt( cl.Pawn.Position - Position, Vector3.Up );
+	}
+
+	public void CarSimulate(Client cl)
+	{
+		if (PrevHasBeenLookedAt != HasBeenLookedAt) {
+			CarSinceLookedAt = 0;
+		}
+		// if (!HasDialogued && HasBeenLookedAt && Position.AlmostEqual(SpawnLocation, 5f)) {
+		// 	if (IsClient) {
+		// 		string message = MaterialGroup switch {
+		// 			0 => "...",
+		// 			1 => "hey what's up",
+		// 			2 => "can i just get my order please.",
+		// 			_ => "i am error"
+		// 		};
+
+		// 		var dialogue = new Speech(message);
+		// 		dialogue.Position = Position + Vector3.Up * 55f + Rotation.Left * 34f;
+
+		// 		Log.Info( "created speech bubble" );
+		// 	}
+
+		// 	HasDialogued = true;
+		// }
+
+		var targetAnim = "sit";
+		if (MaterialGroup != 0) {
+			targetAnim = "sit" + MaterialGroup.ToString();
+		}
+
+		if (CurrentSequence.Name != targetAnim || CurrentSequence.IsFinished) {
+			PlaybackRate = 1f;
+			DirectPlayback.Play( targetAnim );
+			SetAnimation( targetAnim );
+		}
+
+		// if (IsClient)
+		// 	return;
+
+		// if (Position)
+		// Position += Rotation.Forward * 50 * Time.Delta;
+
+		foreach(var child in Children) {
+			if (child is not Car car)
+				continue;
+
+			car.Simulate( cl );
+
+			if (IsClient) {
+				car.RevSound.SetPitch(
+					(MathF.Abs( Position.Distance( SpawnLocation ) ) / 150f) + 1f
+				);
+				continue;
+			}
+
+			// This is extremely fucking ugly...
+			//! todo refactor.
+			if (car.Finished) {
+				// Position += Rotation.Forward * 50 * Time.Delta;
+				var dest = SpawnLocation + Rotation.Forward * 300f;
+				if (!Position.AlmostEqual(dest, 1f)) {
+					Position += (dest - Position) / 100f;
+				} else {
+					Finished = true;
+				}
+			} else {
+				if (!Position.AlmostEqual(SpawnLocation, 1f)) {
+					Position += (SpawnLocation - Position) / 50f;
+				} else {
+					car.CreateButton();
+				}
+			}
+		}
 	}
 
 	public void DeathSimulate(Client cl)
@@ -94,36 +189,19 @@ public partial class Creep : AnimatedMapEntity
 		if (IsServer) {
 			// Make sure we're facing the player
 			Rotation = Rotation.LookAt( player.Position.WithZ(0) - Position.WithZ(0), Vector3.Up );
+			Position += Rotation.Backward * 0.05f;
 		}
 
-		// Hacky solution but I'll take it because no time.
-		// if (CurrentSequence.Name != "kill" || CurrentSequence.IsFinished || DirectPlayback.Name != "kill") {
-		// 	PlaybackRate = 2;
-		// 	DirectPlayback.Play( "kill" );
-		// 	SetAnimation( "kill" );
-		// }
-		// Log.Info(
-		// 	$"name[{CurrentSequence.Name}] fin[{CurrentSequence.IsFinished}] tim[{CurrentSequence.TimeNormalized}]"
-		// );
-
-		// Log.Info(
-		// 	$"name[{DirectPlayback.Name}] time[{DirectPlayback.TimeNormalized}]"
-		// );
-
 		if ((CurrentSequence.Name != "killing" && CurrentSequence.Name != "kill") || CurrentSequence.IsFinished) {
-			Log.Info( $"curr[{CurrentSequence.Name}]" );
-			if (TimesKilled > 5) {
+			if (player.TimeUntilDeath < 1f) {
 				return;
 			}
+			// Log.Info( $"curr[{CurrentSequence.Name}]" );
 
-			TimesKilled++;
+			TimesKilled += 1;
 			PlaybackRate = 1.5f;
 			DirectPlayback.Play( "killing" );
 			SetAnimation( "killing" );
-		}
-
-		if (IsServer) {
-			Position += Rotation.Backward * 0.05f * TimesKilled;
 		}
 	}
 

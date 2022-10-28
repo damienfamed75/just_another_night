@@ -1,0 +1,42 @@
+selfspeak{
+	position: absolute;
+	opacity: 0;
+
+	justify-content: center;
+	align-items: center;
+
+	bottom: 5%;
+
+	background-color: rgba(black, 0.5);
+	background-size: contain;
+
+	backdrop-filter: blur(12px);
+
+	border: 2px rgba(white, 0.2);
+
+	border-radius: 50%;
+
+	.dialogue{
+		text-align: center;
+		font-size: 36px;
+		font-family: Poppins;
+		color: white;
+		// margin: 24;
+		margin-left: 24;
+		margin-right: 24;
+		margin-top: 8;
+		margin-bottom: 8;
+
+		opacity: 1;
+	}
+
+	transition: all 1s ease-out;
+
+	transform: scale(0.9);
+
+	&.active{
+		transform: scale(1);
+		opacity: 1;
+		transition: all 0.1s ease-in;
+	}
+}

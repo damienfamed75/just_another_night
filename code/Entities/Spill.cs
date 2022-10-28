@@ -63,6 +63,14 @@ public partial class Spill : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
+		if (IsServer)
+			return false;
+
+		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+			SelfSpeak.Current.SayCustomerWaiting();
+			return false;
+		}
+
 		SpillAmount = (SpillAmount - 2 * Time.Delta).Clamp( 0.0f, 100f );
 
 		SpillParticle.Destroy( true );

@@ -25,6 +25,14 @@ public partial class TrashBag : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
+		if (IsServer)
+			return false;
+
+		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+			SelfSpeak.Current.SayCustomerWaiting();
+			return false;
+		}
+
 		var player = user as JustAnotherPlayer;
 		// Double check that the player has space for the item.
 		if (!player.HasRoomForItem())

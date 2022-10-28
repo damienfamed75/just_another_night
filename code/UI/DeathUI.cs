@@ -17,18 +17,7 @@ public class DeathUI : Panel
 		Credits = AddChild<Label>( "credits" );
 		Credits.SetText(
 @"created by:
-Damien#0812
-
-sounds sampled from:
-Breviceps
-Fawfulgrox
-ERH
-Nicolas Drweski
-InspectorJ
-LennyBoy
-RiverNile
-Nachtmahrtv
-YFJesse"
+Damien#0812"
 );
 
 		Style.Opacity = 0f;

@@ -20,8 +20,6 @@ public partial class JustAnotherGame : Sandbox.Game
 	[Net]
 	RealTimeSince TimeSinceClientJoined { get; set; }
 
-	Sound Violins { get; set; }
-	Sound Heartbeat { get; set; }
 	float EffectsVolume { get; set; }
 
 	[Net]
@@ -181,48 +179,6 @@ public partial class JustAnotherGame : Sandbox.Game
 			effects.Pixelation = 0.15f;
 			// effects.Pixelation = 0.20f;
 
-			// var creep = All.OfType<Creep>().FirstOrDefault();
-			// if (creep != null && creep.IsValid()) {
-			// 	var ray = new Ray(
-			// 		player.EyePosition, player.EyeRotation.Forward
-			// 	);
-
-			// 	var tr = Trace.Ray( ray, player.Position.Distance( creep.Position ) )
-			// 		.WithAnyTags("creep", "solid")
-			// 		.Run();
-
-			// 	DebugOverlay.ScreenText( $"{tr.EndPosition.Distance( creep.Position + Vector3.Up * 60f )}", new Vector2( 10, 10 ), 0, Color.Yellow );
-
-			// 	var distance = tr.EndPosition.Distance( creep.Position + Vector3.Up * 60f );
-
-			// 	if (distance < 1300.0f) {
-			// 		if (!LookingAtCreep) {
-			// 			Heartbeat = Sound.FromEntity( "heartbeat", player );
-			// 			Violins = Sound.FromEntity( "violins-loop", player );
-			// 			TimeSinceStare = 0;
-			// 			LookingAtCreep = true;
-			// 		}
-
-			// 		effects.Vignette.Intensity = (effects.Vignette.Intensity + Time.Delta / 4).Clamp( 0.0f, 0.6f );
-
-			// 		Violins.SetVolume( distance.LerpInverse( 1250.0f, 50f ) );
-			// 		Heartbeat.SetVolume( distance.LerpInverse( 1250.0f, 50f ) );
-			// 	} else {
-			// 		if (LookingAtCreep) {
-			// 			Heartbeat.Stop();
-			// 			Violins.Stop();
-			// 			TimeSinceStare = 0;
-			// 			LookingAtCreep = false;
-			// 		}
-
-			// 		effects.Vignette.Intensity = (effects.Vignette.Intensity - Time.Delta / 4).Clamp( 0.0f, 1.0f );
-			// 	}
-
-			// 	if (TimeSinceStare > 5) {
-
-			// 	}
-			// }
-
 			if (LookingAtCreep || player.Incapacitated) {
 				var delta = Time.Delta / 4f;
 
@@ -234,9 +190,6 @@ public partial class JustAnotherGame : Sandbox.Game
 					(effects.ChromaticAberration.Offset.z + delta/75).Clamp( 0.001f, 0.015f )
 				);
 
-				// EffectsVolume = TimeSinceStare / 5.0f;
-				// Heartbeat.SetVolume( EffectsVolume );
-				// Violins.SetVolume( EffectsVolume );
 			} else {
 				var delta = Time.Delta / 4f;
 
@@ -250,31 +203,7 @@ public partial class JustAnotherGame : Sandbox.Game
 
 				// EffectsVolume = (EffectsVolume - Time.Delta / 4).Clamp(0.0f, 1.0f);
 			}
-
-			Heartbeat.SetVolume( EffectsVolume );
-			Violins.SetVolume( EffectsVolume );
-
-			if (EffectsVolume == 0.0f) {
-				Heartbeat.Stop();
-				Violins.Stop();
-			}
 		}
-	}
-
-	[ClientRpc]
-	public void StartLookAtCreepEffects()
-	{
-		// Heartbeat = Sound.FromEntity( "heartbeat", Local.Pawn );
-		// Heartbeat.SetVolume( 0.0f );
-		// Violins = Sound.FromEntity( "violins-loop", Local.Pawn );
-		// Violins.SetVolume( 0.0f );
-	}
-
-	[ClientRpc]
-	public void StopLookAtCreepEffects()
-	{
-		// Heartbeat.Stop();
-		// Violins.Stop();
 	}
 
 	public override void Simulate( Client cl )

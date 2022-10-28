@@ -7,13 +7,13 @@
 		VolumeRandom = 0
 		Pitch = 0.9
 		PitchRandom = 0.1
-		Decibels = 70
+		Decibels = 145
 		Sounds = 
 		[
 			resource:"sounds/door-close.vsnd",
 		]
 		SelectionMode = "Random"
-		MaximumDistance = 1143.9335
-		MinimumDistance = 57.196674
+		MaximumDistance = 4803.1025
+		MinimumDistance = 240.15514
 	}
 }

@@ -6,11 +6,12 @@
 		Volume = 1
 		VolumeRandom = 0.1
 		Pitch = 1
-		PitchRandom = 0.1
+		PitchRandom = 0
 		Decibels = 120
 		Sounds = 
 		[
 			resource:"sounds/grab-item.vsnd",
+			resource:"sounds/grab-item2.vsnd",
 		]
 		SelectionMode = "Random"
 		MaximumDistance = 3299.7227

@@ -66,7 +66,7 @@ public partial class TrashBag : ModelEntity, IUse
 		glow.Width = 0f;
 
 		Button = new ActionButton();
-		Button.Position = Position + Rotation.Up * 36f;
+		Button.Position = Position + Rotation.Up * 42f;
 		Button.Prop = this;
 	}
 

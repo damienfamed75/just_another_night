@@ -8,8 +8,14 @@ using Sandbox.UI;
 
 public partial class JustAnotherPlayer : Player
 {
-	[Net]
+	[Net, Change]
 	public PlayerStates State { get; set; } = PlayerStates.PickupTrash;
+
+	public void OnStateChanged(PlayerStates oldValue, PlayerStates newValue)
+	{
+		SelfSpeak.Current.SayTaskComplete();
+		ConsoleSystem.Run( "increment_chore" );
+	}
 
 	[Net]
 	public RealTimeSince EventTimer { get; set; }
@@ -151,7 +157,9 @@ public partial class JustAnotherPlayer : Player
 	protected override void TickPlayerUse()
 	{
 		// This is serverside only
-		if ( !Host.IsServer ) return;
+		// if ( !Host.IsServer ) return;
+		// if (IsServer)
+		// 	return;
 
 		// Turn prediction off
 		using ( Prediction.Off() )
@@ -165,6 +173,12 @@ public partial class JustAnotherPlayer : Player
 					// UseFail();
 					return;
 				}
+
+				if (Using is not ControlledDoor && IsServer) {
+					return;
+				} else if ((Using is ControlledDoor || Using is DoorEntity) && IsClient) {
+					return;
+				}
 			}
 
 			if ( !Input.Down( InputButton.PrimaryAttack ) )
@@ -175,6 +189,12 @@ public partial class JustAnotherPlayer : Player
 
 			if ( !Using.IsValid() )
 				return;
+
+			if (Using is not ControlledDoor && IsServer) {
+				return;
+			} else if ((Using is ControlledDoor || Using is DoorEntity) && IsClient) {
+				return;
+			}
 
 			// If we move too far away or something we should probably ClearUse()?
 

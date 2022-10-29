@@ -41,6 +41,17 @@ public class SelfSpeak : Panel
 		Say( message );
 	}
 
+	public void SayTaskComplete()
+	{
+		string message = Rand.Int( 0, 4 ) switch
+		{
+			0 => "that's a task done. better check the board for more.",
+			_ => "alright, let's check the board for what's next.",
+		};
+
+		Say( message );
+	}
+
 	private void Say(string message)
 	{
 		Dialogue.SetText( message );

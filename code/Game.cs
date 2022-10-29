@@ -46,8 +46,10 @@ public partial class JustAnotherGame : Sandbox.Game
 	[ConCmd.Server("delete_ent")]
 	public static void DeleteEntity(string name)
 	{
-		var ent = All.OfType<Entity>().Where( x => x.Name == name ).First();
-		ent.Delete();
+		var ent = All.OfType<Entity>().Where( x => x.Name == name ).FirstOrDefault();
+
+		if (ent != null && ent.IsValid)
+			ent.Delete();
 	}
 
 	[ConCmd.Server("increment_task")]
@@ -79,6 +81,12 @@ public partial class JustAnotherGame : Sandbox.Game
 		player.ActiveChild = null;
 	}
 
+	[ConCmd.Admin("creep_stare")]
+	public static void SpawnStaringCreep()
+	{
+		(Current as JustAnotherGame).StaringCreep();
+	}
+
 	[ConCmd.Admin("freezer_open")]
 	public static void OpenFreezerDoor()
 	{
@@ -101,6 +109,7 @@ public partial class JustAnotherGame : Sandbox.Game
 			.First();
 
 		backDoor.OnUse( caller );
+		backDoor.TimeBeforeReset = -1;
 	}
 
 	[ClientRpc]
@@ -272,7 +281,7 @@ public partial class JustAnotherGame : Sandbox.Game
 				.WithAnyTags( "creep", "solid" )
 				.Run();
 
-			if (distance < 1000.0f && tr.Entity is Creep && angle < 60.0f) {
+			if (distance < 1000.0f && tr.Entity == creep && angle < 60.0f) {
 				if (!LookingAtCreep) {
 					creep.LookedAt();
 					TimeSinceStare = 0;

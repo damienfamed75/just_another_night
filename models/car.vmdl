@@ -31,7 +31,7 @@
 							},
 							{
 								from = "window.vmat"
-								to = "materials/glass/sbox_glass.vmat"
+								to = "materials/glass/glass_c.vmat"
 							},
 						]
 						use_global_default = false
@@ -46,6 +46,10 @@
 								from = "materials/hotspots/metal_painted_green_a_hs.vmat"
 								to = "materials/hotspots/metal_painted_red_a_hs.vmat"
 							},
+							{
+								from = "materials/glass/glass_c.vmat"
+								to = "materials/glass/sbox_glass.vmat"
+							},
 						]
 					},
 					{
@@ -56,6 +60,10 @@
 							{
 								from = "materials/hotspots/metal_painted_green_a_hs.vmat"
 								to = "materials/hotspots/metal_painted_blue_a_hs.vmat"
+							},
+							{
+								from = "materials/glass/glass_c.vmat"
+								to = "materials/glass/sbox_glass.vmat"
 							},
 						]
 					},

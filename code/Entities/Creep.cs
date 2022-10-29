@@ -111,27 +111,23 @@ public partial class Creep : AnimatedMapEntity
 		if (PrevHasBeenLookedAt != HasBeenLookedAt) {
 			CarSinceLookedAt = 0;
 		}
-		// if (!HasDialogued && HasBeenLookedAt && Position.AlmostEqual(SpawnLocation, 5f)) {
-		// 	if (IsClient) {
-		// 		string message = MaterialGroup switch {
-		// 			0 => "...",
-		// 			1 => "hey what's up",
-		// 			2 => "can i just get my order please.",
-		// 			_ => "i am error"
-		// 		};
 
-		// 		var dialogue = new Speech(message);
-		// 		dialogue.Position = Position + Vector3.Up * 55f + Rotation.Left * 34f;
-
-		// 		Log.Info( "created speech bubble" );
-		// 	}
-
-		// 	HasDialogued = true;
-		// }
+		var player = cl.Pawn as JustAnotherPlayer;
 
 		var targetAnim = "sit";
 		if (MaterialGroup != 0) {
 			targetAnim = "sit" + MaterialGroup.ToString();
+		} else {
+			// Log.Info(GetBoneIndex( "head" ));
+			const int headBone = 5;
+			var boneTransform = GetBoneTransform( headBone );
+			// SetBone( headBone, boneTransform.WithRotation(
+			// 	boneTransform.Rotation.Angles().WithYaw()
+			// ))
+			var lookAt = Rotation.LookAt( player.EyePosition - boneTransform.Position, Vector3.Up );
+			SetBone( headBone, boneTransform.WithRotation(
+				lookAt.Angles().WithYaw(lookAt.Yaw() + 90f).WithRoll(lookAt.Roll()+90f).ToRotation()
+			) );
 		}
 
 		if (CurrentSequence.Name != targetAnim || CurrentSequence.IsFinished) {
@@ -140,12 +136,6 @@ public partial class Creep : AnimatedMapEntity
 			SetAnimation( targetAnim );
 		}
 
-		// if (IsClient)
-		// 	return;
-
-		// if (Position)
-		// Position += Rotation.Forward * 50 * Time.Delta;
-
 		foreach(var child in Children) {
 			if (child is not Car car)
 				continue;
@@ -153,8 +143,14 @@ public partial class Creep : AnimatedMapEntity
 			car.Simulate( cl );
 
 			if (IsClient) {
+				float dist = MathF.Abs( Position.Distance( SpawnLocation ) ) / 150f;
+				// Set the pitch to go up based on distance from the window.
 				car.RevSound.SetPitch(
-					(MathF.Abs( Position.Distance( SpawnLocation ) ) / 150f) + 1f
+					dist + 1f
+				);
+				// Set the volume to go down based on distance from the window.
+				car.RevSound.SetVolume(
+					(1f - dist).Clamp( 0.0f, 1.0f )
 				);
 				continue;
 			}
@@ -285,12 +281,103 @@ public partial class Creep : AnimatedMapEntity
 		SetAnimation( "kill" );
 	}
 
+	[Net]
+	public int GoingToGoal { get; set; } = 0;
+
+	[Net]
+	public RealTimeSince TimeSinceReachedGoal { get; set; }
+
 	public void WatchSimulate(Client cl)
 	{
+		// If we were just looked at.
+		if (HasBeenLookedAt && !PrevHasBeenLookedAt) {
+			// Play the sound at the player.
+			if (IsServer)
+				Sound.FromEntity( "creep-trash-short", cl.Pawn );
+		}
+
+		var targetAnim = "walk";
+		if (GoingToGoal == 1) {
+			targetAnim = "idle";
+		}
+
+		// Hacky solution but I'll take it because no time.
+		if (CurrentSequence.Name != targetAnim || CurrentSequence.IsFinished) {
+			PlaybackRate = 1f;
+			DirectPlayback.Play( targetAnim );
+			SetAnimation( targetAnim );
+		}
+
+		// Don't advance any further than this if client.
 		if (IsClient)
 			return;
 
-		Rotation = Rotation.LookAt( cl.Pawn.Position - Position, Vector3.Up );
+		var toLoc = All.OfType<NPCSpawn>().Where( x => x.Tags.Has( "creep_stare_end" ) ).FirstOrDefault();
+		var finalLoc = All.OfType<NPCSpawn>().Where( x => x.Tags.Has( "creep_stare_end_2" ) ).FirstOrDefault();
+
+		Vector3 goalPosition = GoingToGoal switch {
+			0 => toLoc.Position,
+			1 => toLoc.Position, // Same position to notify the player.
+			_ => finalLoc.Position,
+		};
+
+
+		if (Steer == null) {
+			Steer = new NavSteer {
+				Target = goalPosition
+			};
+		}
+		Steer.Target = goalPosition;
+		// Steer.DebugDrawPath();
+		Steer.Tick( Position, Velocity );
+
+		// Get our input velocity based on position from the target position.
+		Vector3 inputVelocity = default;
+		if (!Steer.Output.Finished) {
+			inputVelocity = Steer.Output.Direction.Normal;
+			var speed = 200f;
+			Velocity = Velocity.AddClamped( inputVelocity * Time.Delta * 500, speed );
+		}
+
+		// Snap to the ground.
+		var ray = new Ray( Position + Vector3.Up * 10, Vector3.Down );
+		var tr = Trace.Ray( ray, 32f )
+			.Ignore( this )
+			.WithoutTags("player")
+			.Run();
+		if (tr.Hit) {
+			Position = Position.WithZ( tr.EndPosition.z );
+		}
+
+		if (Steer.Output.Finished) {
+			// if (GoingToGoal == 0) {
+			// 	TimeSinceReachedGoal = 0;
+			// 	GoingToGoal = 1;
+			// }
+			switch (GoingToGoal) {
+				case 0:
+					TimeSinceReachedGoal = 0;
+					GoingToGoal = 1;
+					break;
+				case 1:
+					if (TimeSinceReachedGoal > 10 && HasBeenLookedAt) {
+						GoingToGoal = 2;
+					}
+					break;
+				default:
+					Finished = true;
+					break;
+			}
+		} else {
+			Position += inputVelocity.WithZ(0) * 1.15f;
+		}
+
+		var lookAtTarget = Steer.Target;
+		if (GoingToGoal == 1) {
+			lookAtTarget = cl.Pawn.Position;
+		}
+		// Turn to the target position.
+		Rotation = Rotation.LookAt( lookAtTarget - Position, Vector3.Up );
 	}
 
 	public void TrashBagsSimulate(Client cl)

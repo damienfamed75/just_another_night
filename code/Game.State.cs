@@ -91,6 +91,8 @@ public partial class JustAnotherGame
 		await WaitStateTimer();
 
 		// initiate customer staring through windows.
+		// Wait until there's nobody left.
+		await WaitUntilCustomerIsGone();
 		StaringCreep();
 
 		while (player.State == JustAnotherPlayer.PlayerStates.MopFloors) {
@@ -108,6 +110,9 @@ public partial class JustAnotherGame
 			.First();
 
 		backDoor.OnUse( player );
+		// Make sure the door doesn't close on its own so the player can investigate
+		// what's going on.
+		backDoor.TimeBeforeReset = -1;
 
 		while (player.State == JustAnotherPlayer.PlayerStates.FixIceCreamMachine) {
 			StateTimer = 1;
@@ -122,16 +127,16 @@ public partial class JustAnotherGame
 		FreezerCreep();
 
 		// Find the freezer door. The map should only have one.
-		var freezerDoor = All.OfType<ControlledDoor>()
-			.Where(x => x.Tags.Has("freezer_door"))
-			.First();
+		// var freezerDoor = All.OfType<ControlledDoor>()
+		// 	.Where(x => x.Tags.Has("freezer_door"))
+		// 	.First();
 
-		// Unlock the freezer door to open it.
-		freezerDoor.Locked = false;
-		// Open the door using the player so the sound plays in their ears.
-		freezerDoor.OnUse( player );
-		// Lock the door again so the player cannot use it.
-		freezerDoor.Locked = true;
+		// // Unlock the freezer door to open it.
+		// freezerDoor.Locked = false;
+		// // Open the door using the player so the sound plays in their ears.
+		// freezerDoor.OnUse( player );
+		// // Lock the door again so the player cannot use it.
+		// freezerDoor.Locked = true;
 
 		while (player.State == JustAnotherPlayer.PlayerStates.OrganizeFreezer) {
 			StateTimer = 1;

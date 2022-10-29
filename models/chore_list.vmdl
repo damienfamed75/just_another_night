@@ -21,6 +21,72 @@
 						use_global_default = false
 						global_default_material = ""
 					},
+					{
+						_class = "MaterialGroup"
+						name = "1"
+						remaps = 
+						[
+							{
+								from = "materials/chore_list.vmat"
+								to = "materials/chore_list_1.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "2"
+						remaps = 
+						[
+							{
+								from = "materials/chore_list.vmat"
+								to = "materials/chore_list_2.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "3"
+						remaps = 
+						[
+							{
+								from = "materials/chore_list.vmat"
+								to = "materials/chore_list_3.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "4"
+						remaps = 
+						[
+							{
+								from = "materials/chore_list.vmat"
+								to = "materials/chore_list_4.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "5"
+						remaps = 
+						[
+							{
+								from = "materials/chore_list.vmat"
+								to = "materials/chore_list_5.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "6"
+						remaps = 
+						[
+							{
+								from = "materials/chore_list.vmat"
+								to = "materials/chore_list_6.vmat"
+							},
+						]
+					},
 				]
 			},
 			{

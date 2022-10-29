@@ -57,6 +57,7 @@ public partial class Dishes : ModelEntity, IUse, IEnablerDisabler
 
 		if (Progress > 99f) {
 			UnwashedDishesParticle.Destroy();
+			WashingSound.Stop();
 			Button.Delete();
 			// Tell the server to delete these dishes.
 			ConsoleSystem.Run( "delete_ent", Name );

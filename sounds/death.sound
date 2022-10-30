@@ -10,7 +10,7 @@
 		Decibels = 70
 		Sounds = 
 		[
-			resource:"sounds/sweet_sweet_death.vsnd",
+			resource:"sounds/death-sound-fadeout.vsnd",
 		]
 		SelectionMode = "Random"
 		MaximumDistance = 1143.9335

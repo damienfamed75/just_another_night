@@ -3,14 +3,14 @@
 	data = 
 	{
 		UI = false
-		Volume = 1
+		Volume = 0.5
 		VolumeRandom = 0
 		Pitch = 1
 		PitchRandom = 0
 		Decibels = 70
 		Sounds = 
 		[
-			resource:"sounds/creep_trash_quick_ascending.vsnd",
+			resource:"sounds/creep_trash_quick.vsnd",
 		]
 		SelectionMode = "Random"
 		MaximumDistance = 1143.9335

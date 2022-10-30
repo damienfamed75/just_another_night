@@ -16,7 +16,8 @@
     "/images/*",
     "/materials/*",
     "/particles/*",
-    "/sounds/*"
+    "/sounds/*",
+    "/fonts/*"
   ],
   "HasCode": true,
   "CodePath": "/code/",

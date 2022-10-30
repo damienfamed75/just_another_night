@@ -10,6 +10,8 @@ public partial class Trash : ModelEntity, IUse
 {
 	public ActionButton Button;
 
+	public bool HasBeenUsed = false;
+
 	public Trash()
 	{
 		SetupPhysicsFromAABB(
@@ -29,7 +31,11 @@ public partial class Trash : ModelEntity, IUse
 		if (IsServer)
 			return false;
 
+		if (HasBeenUsed)
+			return false;
+
 		Sound.FromEntity( "grab-item", user );
+		HasBeenUsed = true;
 
 		var allTrash = All.OfType<Trash>().ToArray();
 		// If this is true then this is the last piece of trash left on the map.

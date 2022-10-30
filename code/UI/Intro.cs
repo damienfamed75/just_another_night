@@ -10,7 +10,9 @@ public class Intro : Panel
 	public Intro()
 	{
 		IntroLabel = AddChild<Label>("intro-label");
-		IntroLabel.SetText( "It's just another late night shift..." );
+		IntroLabel.SetText(
+@"Time to finish the tasks on the board before closing up."
+		);
 
 		TimeSinceCreated = 0;
 	}

@@ -5,7 +5,7 @@ using SandboxEditor;
 [HammerEntity]
 [OrthoBoundsHelper("range", "width", "height")]
 [EditorSprite("materials/editor/color_correction.vmdl")]
-public partial class Spill : ModelEntity, IUse
+public partial class Spill : ModelEntity, IUse, IEnablerDisabler
 {
 	[Property]
 	[Net]
@@ -23,6 +23,14 @@ public partial class Spill : ModelEntity, IUse
 	public float Width { get; set; } = 25f;
 	[Property]
 	public float Height { get; set; } = 25f;
+
+	public bool Finished { get; set; } = false;
+
+	public bool Using { get; set; } = false;
+
+	public Sound MoppingSound { get; set; }
+
+	public TimeSince TimeSinceUsed { get; set; }
 
 	public Spill()
 	{
@@ -81,15 +89,17 @@ public partial class Spill : ModelEntity, IUse
 		if (SpillAmount < 1f) {
 			SpillParticle.Destroy( true );
 			Button.Delete();
+			MoppingSound.Stop();
 			// Tell the server to delete this stain.
 			ConsoleSystem.Run( "delete_ent", Name );
 
 			var allSpills = All.OfType<Spill>().ToArray();
 
 			// If this is true then this is the last spill left on the map.
-			if (allSpills.Length == 1) {
+			if (allSpills.Length == 1 && !Finished) {
 				// Move the player onto their next task.
 				ConsoleSystem.Run( "increment_task" );
+				Finished = true;
 			}
 		}
 
@@ -99,5 +109,25 @@ public partial class Spill : ModelEntity, IUse
 	public bool IsUsable( Entity user ) {
 		var player = user as JustAnotherPlayer;
 		return player.State == JustAnotherPlayer.PlayerStates.MopFloors;
+	}
+
+	public void Enable()
+	{
+		if (!Using && TimeSinceUsed > 0.5f) {
+			MoppingSound = Sound.FromEntity( "mopping", this );
+			Using = true;
+		}
+
+		if (Using) {
+			TimeSinceUsed = 0;
+		}
+	}
+
+	public void Disable()
+	{
+		if (Using && TimeSinceUsed > 0.5) {
+			MoppingSound.Stop();
+			Using = false;
+		}
 	}
 }

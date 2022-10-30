@@ -57,6 +57,7 @@ public partial class Dumpster : ModelEntity, IUse
 			return false;
 
 		TimeSinceDump = 0;
+		Sound.FromEntity( "dumpster", this );
 
 		// Check to see if this is the last trash bag left on the map.
 		var allTrashBags = All.OfType<TrashBag>().ToArray();

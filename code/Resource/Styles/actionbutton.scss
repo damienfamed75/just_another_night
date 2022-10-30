@@ -21,9 +21,11 @@ actionbutton{
 		justify-content: center;
 		align-items: center;
 
-		background-color: rgba(#000000, 0.5);
-		border: 5px solid rgba(white, 0.2);
-		border-radius: 45%;
+		// background-color: rgba(#000000, 0.5);
+		background-color: rgba(#000000, 0.75);
+		// border: 5px solid rgba(white, 0.2);
+		// border-radius: 45%;
+		border-radius: 25%;
 		backdrop-filter: blur(10);
 
 		pointer-events: all;
@@ -62,6 +64,9 @@ actionbutton{
 
 	&:outro{
 		transition: all 0.25s ease-out;
+		color: red;
+		background-image-tint: red;
+		// border: 5px solid rgba(red, 0.2);
 		transform: scale(0);
 	}
 }

@@ -90,6 +90,13 @@ public partial class JustAnotherPlayer : Player
 		Tags.Add( "player" );
 	}
 
+	public override void ClientSpawn()
+	{
+		base.ClientSpawn();
+		// Play the intro sound when client spawns
+		Sound.FromEntity( "intro", this );
+	}
+
 	public override void Simulate( Client cl )
 	{
 		if (Incapacitated && !PrevIncapacitated) {
@@ -226,6 +233,6 @@ public partial class JustAnotherPlayer : Player
 			return 0f;
 		}
 
-		return Velocity.WithZ( 0 ).Length.LerpInverse( 0, 200f ) * 10f;
+		return Velocity.WithZ( 0 ).Length.LerpInverse( 0, 200f ) * 2.5f;
 	}
 }

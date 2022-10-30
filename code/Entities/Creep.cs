@@ -110,6 +110,8 @@ public partial class Creep : AnimatedMapEntity
 	{
 		if (PrevHasBeenLookedAt != HasBeenLookedAt) {
 			CarSinceLookedAt = 0;
+			if (MaterialGroup == 0)
+				Sound.FromEntity( "creep_car", cl.Pawn );
 		}
 
 		var player = cl.Pawn as JustAnotherPlayer;
@@ -140,7 +142,21 @@ public partial class Creep : AnimatedMapEntity
 			if (child is not Car car)
 				continue;
 
+
 			car.Simulate( cl );
+
+			// Wait and stare for a bit longer
+			if (MaterialGroup == 0 && car.TimeSinceFinished < 10)
+				continue;
+
+			// Wait a little bit before going.
+			// if (MaterialGroup != 0 && car.TimeSinceFinished < 3)
+			// 	continue;
+			if (MaterialGroup == 1 && car.TimeSinceFinished < 3)
+				continue;
+
+			if (MaterialGroup == 2 && car.TimeSinceFinished < 6)
+				continue;
 
 			if (IsClient) {
 				float dist = MathF.Abs( Position.Distance( SpawnLocation ) ) / 150f;
@@ -159,9 +175,9 @@ public partial class Creep : AnimatedMapEntity
 			//! todo refactor.
 			if (car.Finished) {
 				// Position += Rotation.Forward * 50 * Time.Delta;
-				var dest = SpawnLocation + Rotation.Forward * 300f;
+				var dest = SpawnLocation + Rotation.Forward * 400f;
 				if (!Position.AlmostEqual(dest, 1f)) {
-					Position += (dest - Position) / 100f;
+					Position += (dest - Position) / 200f;
 				} else {
 					car.StopSounds();
 					Finished = true;
@@ -293,7 +309,7 @@ public partial class Creep : AnimatedMapEntity
 		if (HasBeenLookedAt && !PrevHasBeenLookedAt) {
 			// Play the sound at the player.
 			if (IsServer)
-				Sound.FromEntity( "creep-trash-short", cl.Pawn );
+				Sound.FromEntity( "creep_watch", cl.Pawn );
 		}
 
 		var targetAnim = "walk";

@@ -14,7 +14,7 @@ public class Speech : WorldPanel
 
 		DialogueParent = AddChild<Panel>( "dialogue-parent" );
 		Dialogue = DialogueParent.AddChild<Label>( "dialogue" );
-		TimeUntilDeletion = 5;
+		TimeUntilDeletion = 3;
 
 		Dialogue.SetText( message );
 	}

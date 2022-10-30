@@ -34,7 +34,7 @@ public class SelfSpeak : Panel
 		{
 			0 => "hoorah, another customer...",
 			1 => "great, a customer is here...",
-			2 => "who's eating this late a night",
+			2 => "welp, got another customer.",
 			_ => "guess there's someone at the window.",
 		};
 

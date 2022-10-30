@@ -12,7 +12,7 @@ public partial class ControlledDoor : DoorEntity
 	public override bool OnUse( Entity user )
 	{
 		if (Locked) {
-
+			Sound.FromEntity( "door-locked", user );
 		} else {
 			string soundPath = "quick-door-open";
 			// Freezer door has a specific sound to play.
@@ -20,6 +20,10 @@ public partial class ControlledDoor : DoorEntity
 				soundPath = "slow-door-open";
 			}
 
+			// var dir = (Position - user.Position).Normal;
+			// Sound.FromWorld( soundPath,
+			// 	user.EyePosition + dir * 450f
+			// );
 			Sound.FromEntity( soundPath, user );
 		}
 

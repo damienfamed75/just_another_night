@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandbox.UI.Construct;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,9 +35,23 @@ public partial class JustAnotherGame : Sandbox.Game
 	[Net]
 	public bool WaitingCustomer { get; set; }
 
+	[Net]
+	public RealTimeSince TimeSinceStateChanged { get; set; }
+
 	public JustAnotherGame()
 	{
 		if (IsServer) {
+			PossibleSounds = new List<string>()
+			{
+				"rat_scurry",
+				"wood_grazing",
+				"wobble",
+				"distant_drop1",
+				"distant_drop2",
+				"close_quiet",
+				"close_loud"
+			};
+
 			Hud = new JustAnotherHud();
 
 			_ = GameLoopAsync();
@@ -55,6 +70,10 @@ public partial class JustAnotherGame : Sandbox.Game
 	[ConCmd.Server("increment_task")]
 	public static void IncrementTask()
 	{
+		var game = Current as JustAnotherGame;
+		if (game.TimeSinceStateChanged < 5)
+			return;
+
 		var player = ConsoleSystem.Caller.Pawn as JustAnotherPlayer;
 		player.State++;
 		Log.Info( $"playerstate[{player.State}]" );
@@ -167,6 +186,7 @@ public partial class JustAnotherGame : Sandbox.Game
 		}
 
 		TimeSinceClientJoined = 0;
+		TimeSinceStateChanged = 0;
 	}
 
 	public override void FrameSimulate( Client cl )
@@ -234,12 +254,22 @@ public partial class JustAnotherGame : Sandbox.Game
 			if (child is not Creep creep)
 				continue;
 
+			bool prevLook = LookingAtCreep;
 			CheckForCreep( cl, creep );
 
 			if (creep.Finished) {
 				creep.Delete();
 				break;
 			}
+
+			if (LookingAtCreep)
+				break;
+		}
+
+		// If there aren't any creeps on the map then you're not looking at one.
+		// note: This is to fix when looking at a creep when they delete.
+		if (!All.OfType<Creep>().Any()) {
+			LookingAtCreep = false;
 		}
 
 		// CheckForCreep( cl );
@@ -285,7 +315,8 @@ public partial class JustAnotherGame : Sandbox.Game
 				if (!LookingAtCreep) {
 					creep.LookedAt();
 					TimeSinceStare = 0;
-					if (creep.State != Creep.CreepStates.Car)
+					// if (creep.State != Creep.CreepStates.Car)
+					if (creep.MaterialGroup == 0)
 						LookingAtCreep = true;
 				}
 			} else {

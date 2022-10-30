@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sandbox;
@@ -13,6 +14,13 @@ public partial class JustAnotherGame
 	[Net]
 	public RealTimeUntil StateTimer { get; set; } = 0f;
 
+	// Used to keep track of the spooky noises that could play in the player's ears.
+	[Net]
+	public int EventSoundsPlayed { get; set; } = 0;
+
+	[Net]
+	public List<string> PossibleSounds { get; set; }
+
 	public enum GameStates
 	{
 		FirstCustomer,
@@ -20,6 +28,38 @@ public partial class JustAnotherGame
 		SecondNormalCustomerAndWeirdGuyStaring,
 		BackDoorOpens,
 		FreezerUnlocks
+	}
+
+	private bool ShouldPlaySound(int max, float chance, Entity player)
+	{
+		if (LookingAtCreep)
+			return false;
+
+		var tr = Trace.Ray( new Ray(
+			player.EyePosition, Vector3.Up
+		), 200f ).WithTag("solid").Run();
+		if (!tr.Hit) {
+			Log.Info( "player is outside" );
+			return false;
+		}
+
+		if (EventSoundsPlayed < max && Rand.Float() < chance) {
+			return true;
+		}
+		return false;
+	}
+
+	private void PlayRandomEventSound(Vector3 pos)
+	{
+		if (PossibleSounds.Count < 1)
+			return;
+
+		int max = PossibleSounds.Count-1;
+
+		var i = Rand.Int( 0, max );
+		var sound = PossibleSounds[i];
+		Sound.FromWorld( sound, pos + Rotation.Random.Forward * 15f );
+		PossibleSounds.RemoveAt( i );
 	}
 
 	private async Task GameLoopAsync()
@@ -30,6 +70,8 @@ public partial class JustAnotherGame
 		// There should only be a single client since this is a singleplayer game.
 		var client = All.OfType<Client>().First();
 		var player = client.Pawn as JustAnotherPlayer;
+
+		EventSoundsPlayed = 0;
 
 		// var triggerPlacement = All.OfType<TriggerOnce>().Where( x => x.Tags.Has( "freezer_trigger" ) ).First();
 		// var trigger = new TriggerOnce();
@@ -58,6 +100,9 @@ public partial class JustAnotherGame
 		Sound.FromEntity( "customer-beep", player );
 
 		while (player.State == JustAnotherPlayer.PlayerStates.TakeOutTrashBags) {
+			if (ShouldPlaySound(1, 0.05f, player)) {
+				PlayRandomEventSound( player.EyePosition );
+			}
 			StateTimer = 1;
 			await WaitStateTimer();
 		}
@@ -75,6 +120,9 @@ public partial class JustAnotherGame
 		// initiate weird customer.
 
 		while (player.State == JustAnotherPlayer.PlayerStates.WashDishes) {
+			if (ShouldPlaySound(1, 0.05f, player)) {
+				PlayRandomEventSound( player.EyePosition );
+			}
 			StateTimer = 1;
 			await WaitStateTimer();
 		}
@@ -96,6 +144,9 @@ public partial class JustAnotherGame
 		StaringCreep();
 
 		while (player.State == JustAnotherPlayer.PlayerStates.MopFloors) {
+			if (ShouldPlaySound(2, 0.05f, player)) {
+				PlayRandomEventSound( player.EyePosition );
+			}
 			StateTimer = 1;
 			await WaitStateTimer();
 		}
@@ -115,6 +166,9 @@ public partial class JustAnotherGame
 		backDoor.TimeBeforeReset = -1;
 
 		while (player.State == JustAnotherPlayer.PlayerStates.FixIceCreamMachine) {
+			if (ShouldPlaySound(1, 0.1f, player)) {
+				PlayRandomEventSound( player.EyePosition );
+			}
 			StateTimer = 1;
 			await WaitStateTimer();
 		}

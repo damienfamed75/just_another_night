@@ -17,14 +17,33 @@ public partial class Car : ModelEntity, IUse
 
 	public bool HasDialogued { get; set; } = false;
 
+	[Net]
+	public RealTimeSince TimeSinceFinished { get; set; }
+
 	public ActionButton Button;
 	public Sound RevSound;
+
+	[Net, Predicted]
+	public ModelEntity FoodBag { get; set; }
+
+	[Net]
+	public Vector3 FoodBeginPosition { get; set; }
+
+	[Net]
+	public bool SaidSecondText { get; set; } = false;
 
 	[ConCmd.Server("car_finish")]
 	public static void Finish(string name)
 	{
 		var car = All.OfType<Car>().Where( x => x.Name == name ).First();
 		car.Finished = true;
+		car.TimeSinceFinished = 0;
+		car.FoodBag.EnableDrawing = true;
+
+		car.FoodBeginPosition = car.Position
+			+ Vector3.Up * 40f
+			+ car.Rotation.Left * 42f
+			+ car.Rotation.Forward * 5f;
 
 		(Game.Current as JustAnotherGame).WaitingCustomer = false;
 	}
@@ -43,6 +62,10 @@ public partial class Car : ModelEntity, IUse
 	public override void Spawn()
 	{
 		base.Spawn();
+
+		FoodBag = new ModelEntity( "models/paper_bag.vmdl" );
+		FoodBag.SetParent( this, null, Transform.Zero );
+		FoodBag.EnableDrawing = false;
 
 		SetModel( "models/car.vmdl" );
 
@@ -71,7 +94,7 @@ public partial class Car : ModelEntity, IUse
 	{
 		if (Button == null) {
 			Button = new ActionButton();
-			Button.Position = Position + Vector3.Up * 40f + Rotation.Left * 36f;
+			Button.Position = Position + Vector3.Up * 40f + Rotation.Left * 36f + Rotation.Forward * 5f;
 			Button.Prop = this;
 		}
 
@@ -79,16 +102,22 @@ public partial class Car : ModelEntity, IUse
 		if (creep.HasBeenLookedAt && !HasDialogued && creep.CarSinceLookedAt > 1) {
 			if (IsClient) {
 				string message = MaterialGroup switch {
-					0 => "...",
+					0 => ". . .", // the spaces are needed because my font is bad. :)
 					1 => "hey what's up",
-					2 => "can i just get my order please.",
+					2 => "i have places to be.",
 					_ => "i am error"
 				};
 
 				var dialogue = new Speech(message);
-				dialogue.Position = Position + Vector3.Up * 58f + Rotation.Left * 35f;
+				dialogue.Position = Position + Vector3.Up * 58f + Rotation.Left * 35f + Rotation.Forward * 5f;
 
-				Log.Info( "created speech bubble" );
+				if (MaterialGroup == 1) {
+					Sound.FromEntity( "customer_1_speak", Local.Pawn );
+				} else if (MaterialGroup == 2) {
+					Sound.FromEntity( "customer_2_speak_first", Local.Pawn );
+				}
+
+				// Log.Info( "created speech bubble" );
 			}
 
 			HasDialogued = true;
@@ -122,5 +151,52 @@ public partial class Car : ModelEntity, IUse
 	public bool IsUsable( Entity user )
 	{
 		return true;
+	}
+
+	public override void Simulate( Client cl )
+	{
+		base.Simulate( cl );
+
+		// If the button was clicked then transfer some food here.
+		if (!Finished)
+			return;
+
+		if (FoodBag == null || !FoodBag.IsValid())
+			return;
+
+		var delta = TimeSinceFinished.Relative.LerpInverse( 0.0f, 3.0f );
+
+		FoodBag.EnableDrawing = true;
+
+		// if (IsClient)
+		// 	return;
+
+		if (IsClient) {
+			return;
+		}
+
+		FoodBag.Position = FoodBeginPosition.LerpTo(
+			Position + Vector3.Up * 40f + Rotation.Forward * 5f,
+			delta
+		);
+
+		if (delta == 1.0f) {
+			FoodBag.Delete();
+
+			// If this is the second normal customer then say something else
+			// to get the player to continue looking at them.
+			if (MaterialGroup == 2 && !SaidSecondText) {
+				SecondText();
+				SaidSecondText = true;
+			}
+		}
+	}
+
+	[ClientRpc]
+	public void SecondText()
+	{
+		Sound.FromEntity( "customer_2_speak_second", Local.Pawn );
+		var dialogue = new Speech("be careful kid.");
+		dialogue.Position = Position + Vector3.Up * 58f + Rotation.Left * 35f + Rotation.Forward * 5f;
 	}
 }

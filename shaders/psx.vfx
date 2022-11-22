@@ -1,0 +1,147 @@
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+HEADER
+{
+	Description = "PSX Shader";
+
+	DevShader = true;
+
+    Version = 1;
+}
+
+//=========================================================================================================================
+// MODES
+// {
+// 	VrForward();
+//     ToolsVis(S_MODE_TOOLS_VIS);
+// }
+
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+FEATURES
+{
+    #include "common/features.hlsl"
+}
+
+//=========================================================================================================================
+COMMON
+{
+    // float g_flAffineAmount = 1;
+
+	#define S_GGX_SHADING 1
+	#define S_SPECULAR 1
+	#define S_METALNESS_TEXTURE 0
+	#define S_SPECULAR_CUBE_MAP 1
+	#define S_TRANSLUCENT 0
+	#define S_ALPHA_TEST 0
+	#define BLEND_MODE_ALREADY_SET
+	#define VS_INPUT_HAS_TANGENT_BASIS 1
+	#define D_NO_MODEL_TINT 1
+	#define PS_INPUT_HAS_TANGENT_BASIS 1
+
+	#include "system.fxc"
+	#include "common/shared.hlsl"
+}
+
+//=========================================================================================================================
+
+struct VertexInput
+{
+	#include "common/vertexinput.hlsl"
+};
+
+//=========================================================================================================================
+
+struct PixelInput
+{
+	#include "common/pixelinput.hlsl"
+};
+
+//=========================================================================================================================
+
+VS
+{
+    #include "common/vertex.hlsl"
+
+    int g_RoundToDecimalPlace< Range(0, 10); Default(0); UiGroup( "Go Back Settings,10/10" ); >;
+    IntAttribute(g_RoundToDecimalPlace, g_RoundToDecimalPlace);
+	float g_flSnapScale< Range(1.0f, 5.0f); Default(2.0f); UiGroup( "Go Back Settings,10/10" ); >;
+	FloatAttribute(g_flSnapScale, g_flSnapScale);
+
+    //
+    // Main
+    //
+    PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
+    {
+        PixelInput o = ProcessVertex( i );
+
+        // Vertex Snapping
+        float flRound = pow(10, g_RoundToDecimalPlace) * g_flSnapScale;
+        o.vPositionPs.xyz = round(o.vPositionPs.xyz * flRound) / flRound;
+
+        // Affine texture mapping
+        o.vTextureCoords *= lerp(1.0f, o.vPositionPs.w, g_flAffineAmount * 0.005f);
+
+        // return FinalizeVertex( o );
+        return VS_CommonProcessing_Post( o );
+    }
+}
+//=========================================================================================================================
+
+// PS
+// {
+//     #include "common/pixel.hlsl"
+
+// 	// DIFFUSE=tex(imagem, VAR1.xy/VAR1.z).rgb;
+
+// 	//
+// 	// Main
+// 	//
+// 	float4 MainPs( PixelInput i ) : SV_Target0
+// 	{
+// 		Material m = GatherMaterial( i );
+// 		/* m.Metalness = 1.3f; // Forces the object to be metalic */
+// 		return FinalizePixelMaterial( i, m );
+// 	}
+// }
+
+// void vertex() {
+// 	vec4 view_space = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
+// 	affine_uv = vec4(UV * view_space.z, view_space.z, 0.0);
+// }
+
+PS
+{
+    StaticCombo( S_USE_TINT_MASKS_IN_VERTEX_PAINT, F_USE_TINT_MASKS_IN_VERTEX_PAINT, Sys( PC ) );
+
+	#include "common/pixel.hlsl"
+
+	RenderState( SrcBlend, ONE );
+	RenderState( DstBlend, ZERO );
+
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{
+		// Gather our texture inputs and convert them to the material struct
+		Material m = GatherMaterial( i );
+
+		#if( S_USE_TINT_MASKS_IN_VERTEX_PAINT )
+		{
+			material.Albedo = lerp( material.Albedo.xyz, material.Albedo.xyz * i.vPaintValues.xyz, material.TintMask.x );
+		}
+		#else
+		{
+			material.Albedo = material.Albedo.xyz * i.vPaintValues.xyz;
+		}
+		#endif
+
+		// Affine texture mapping
+        i.vTextureCoords.xy /= lerp(1.0f, i.vPositionSs.w, g_flAffineAmount * 0.005f);
+		// Force our object to be metallic
+		// m.Metalness = 1.3f;
+		// Shade our surface with lighting
+        ShadingModelValveStandard sm;
+		return FinalizePixelMaterial( i, m, sm );
+	}
+}

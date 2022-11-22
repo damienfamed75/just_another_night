@@ -1,0 +1,179 @@
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+HEADER
+{
+	Description = "Template Shader for S&box";
+}
+
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+FEATURES
+{
+    #include "common/features.hlsl"
+}
+
+//=========================================================================================================================
+COMMON
+{
+	float g_flAffineAmount = 100;
+	// float3 g_flAffineAmount < UiType( float ); Default( 0.0 ); UiGroup( "Go Back To Settings,10/10" ); >;
+
+	#include "common/shared.hlsl"
+}
+
+//=========================================================================================================================
+
+struct VertexInput
+{
+	#include "common/vertexinput.hlsl"
+};
+
+//=========================================================================================================================
+
+struct PixelInput
+{
+	#include "common/pixelinput.hlsl"
+};
+
+//=========================================================================================================================
+
+VS
+{
+	#include "common/vertex.hlsl"
+
+    int g_RoundToDecimalPlace< Range(0, 10); Default(0); UiGroup( "Go Back Settings,10/10" ); >;
+    IntAttribute(g_RoundToDecimalPlace, g_RoundToDecimalPlace);
+	float g_flSnapScale< Range(1.0f, 5.0f); Default(2.0f); UiGroup( "Go Back Settings,10/10" ); >;
+	FloatAttribute(g_flSnapScale, g_flSnapScale);
+
+	//
+	// Main
+	//
+	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
+	{
+		PixelInput o = ProcessVertex( i );
+		// Add your vertex manipulation functions here
+
+        // Vertex Snapping
+        float flRound = pow(10, g_RoundToDecimalPlace) * g_flSnapScale;
+        o.vPositionPs.xyz = round(o.vPositionPs.xyz * flRound) / flRound;
+
+        // Affine texture mapping
+        o.vTextureCoords *= lerp(1.0f, o.vPositionPs.w, g_flAffineAmount * 0.005f);
+
+		return FinalizeVertex( o );
+	}
+}
+
+//=========================================================================================================================
+
+PS
+{
+    #include "common/pixel.hlsl"
+
+	// class ShadingModelExample : ShadingModel
+    // {
+    //     float3 Albedo;
+    //     float3 NormalWs;
+    //     float3 ViewRayWs;
+
+    //     //
+    //     // Consumes a material and converts it to the internal shading parameters,
+    //     // That is more easily consumed by the shader.
+    //     //
+    //     // Inherited classes can expand this to whichever shading model they want.
+    //     //
+    //     void Init( const PixelInput pixelInput, const Material material )
+    //     {
+	// 		// Keep track of our albedo & normal
+    //         Albedo = material.Albedo;
+    //         NormalWs = material.Normal;
+
+    //         float3 PositionWithOffsetWs = pixelInput.vPositionWithOffsetWs.xyz;
+    //         float3 PositionWs = PositionWithOffsetWs + g_vCameraPositionWs;
+
+    //         // View ray in World Space
+    //         ViewRayWs = CalculatePositionToCameraDirWs( PositionWs );
+    //     }
+        
+    //     //
+    //     // Executed for every direct light
+    //     //
+    //     LightShade Direct( const LightData light )
+    //     {
+	// 		// Shading output
+    //         LightShade shade;
+
+	// 		// Compute our shadow mask
+	// 		float flShadow = light.NdotL * light.Visibility * light.Attenuation;
+			
+	// 		// Make it hard instead of a soft transition
+	// 		flShadow = step(0.001f, flShadow);
+
+	// 		// Calculate everything we need for specular
+    //         // float3 vHalfAngleDirWs = normalize(ViewRayWs + light.LightDir);
+	// 		// float flNdotH = dot( vHalfAngleDirWs.xyz, NormalWs );
+
+	// 		// // Sharpen our specular
+	// 		// float flSpecular = pow(flNdotH * flShadow, 100.0f);
+	// 		// // Smooth it out a little bit
+	// 		// flSpecular = smoothstep(0.005, 0.01, flSpecular);
+
+	// 		// // Diffuse lighting for the current light
+    //         // shade.Diffuse = saturate(flShadow * light.Color) * g_flTintColor;
+
+	// 		// // Calculate our specular for the current light
+    //         // shade.Specular = flSpecular * Albedo * g_flTintColor;
+	// 		shade.Diffuse = Albedo;
+	// 		shade.Specular = 0.0;
+
+    //         return shade;
+    //     }
+        
+    //     //
+    //     // Executed for indirect lighting, combine ambient occlusion, etc.
+    //     //
+    //     LightShade Indirect()
+    //     {
+    //         LightShade shade;
+
+    //         // Get a flat average ambient
+    //         float3 vAmbientCube[6];
+	// 	    SampleLightProbeVolume( vAmbientCube, float3(0,0,0) );
+
+    //         // Light with our ambient color
+	// 		float3 flColor = 0.0f;
+	// 		for(int i = 0; i < 6; i++)
+	// 			flColor += vAmbientCube[i] * (1.0f / 6.0f);			
+    //         shade.Diffuse = flColor * Albedo;
+	// 		shade.Diffuse = Albedo;
+
+    //         // No specular
+    //         shade.Specular = 0.0f;
+
+    //         return shade;
+    //     }
+
+	// 	float4 PostProcess( float4 vColor )
+	// 	{
+	// 		// We don't need any post processing!
+	// 		return vColor;
+	// 	}
+    // };
+
+	//
+	// Main
+	//
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{
+		i.vTextureCoords.xy /= lerp(1.0f, i.vPositionSs.w, g_flAffineAmount * 0.005f);
+		Material m = GatherMaterial( i );
+		/* m.Metalness = 1.3f; // Forces the object to be metalic */
+		ShadingModelValveStandard sm;
+		// ShadingModelExample sm;
+
+		return FinalizePixelMaterial( i, m, sm );
+	}
+}

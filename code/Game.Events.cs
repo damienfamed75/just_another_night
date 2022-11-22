@@ -6,39 +6,20 @@ public partial class JustAnotherGame
 	public void DeleteCreep()
 	{
 		var creep = All.OfType<Creep>().FirstOrDefault();
-		if (creep != null) {
-			creep.Delete();
-		}
+		// If the creep is not null, then delete them.
+		creep?.Delete();
 	}
 
 	public void TrashStaringCreep()
 	{
 		var creep = SpawnCreep("creep_trash");
 		creep.State = Creep.CreepStates.TakeOutTrashBags;
-
-		// var spawnpoint = All.OfType<NPCSpawn>()
-		// 	.Where( x => x.Tags.Has( "creep_trash" ) )
-		// 	.FirstOrDefault();
-
-		// if (spawnpoint != null)
-		// 	creep.Transform = spawnpoint.Transform;
-
-		Log.Info( "spawned trash creep" );
 	}
 
 	public void StaringCreep()
 	{
 		var creep = SpawnCreep("creep_stare");
 		creep.State = Creep.CreepStates.WatchOutsideBuilding;
-
-		// var spawnpoint = All.OfType<NPCSpawn>()
-		// 	.Where( x => x.Tags.Has( "creep_stare" ) )
-		// 	.FirstOrDefault();
-
-		// if (spawnpoint != null)
-		// 	creep.Transform = spawnpoint.Transform;
-
-		Log.Info( "spawned creep" );
 	}
 
 	public void FreezerCreep()
@@ -59,21 +40,21 @@ public partial class JustAnotherGame
 	{
 		await WaitUntilCustomerIsGone();
 		// Put the creep in the seat of the car.
-		// creep.Transform = car.GetSeatPosition();
-		SpawnCustomer( 1 );
+		SpawnCustomer( 1 ); // Material Group 1
 	}
 
 	public async Task CreepCustomer()
 	{
 		await WaitUntilCustomerIsGone();
 		// The creep's material group skin is default so it's zero.
-		SpawnCustomer( 0 );
+		SpawnCustomer( 0 ); // Material Group 0
 	}
 
 	public async Task SecondNormalCustomer()
 	{
 		await WaitUntilCustomerIsGone();
-		SpawnCustomer( 2 );
+		// Put the creep in the seat of the car.
+		SpawnCustomer( 2 ); // Material Group 2
 	}
 
 	private void SpawnCustomer(int group = 0)
@@ -82,13 +63,13 @@ public partial class JustAnotherGame
 		creep.State = Creep.CreepStates.Car;
 		creep.Position += Rotation.Forward * 200f;
 
+		// Create a new car and move the car to the creep location.
 		var car = new Car {
 			Parent = creep,
 			Driving = true,
-			MaterialGroup = group
+			MaterialGroup = group,
+			Transform = creep.Transform
 		};
-		// Move the car to the creep.
-		car.Transform = creep.Transform;
 
 		car.Spawn();
 

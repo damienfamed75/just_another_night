@@ -62,8 +62,13 @@ public partial class JustAnotherGame
 		PossibleSounds.RemoveAt( i );
 	}
 
+	/// <summary>
+	/// This is the gameplay loop. Not much of a loop as much as it is a string
+	/// of events that should happen ingame.
+	/// </summary>
 	private async Task GameLoopAsync()
 	{
+		// Wait 5 seconds for the intro to fade away.
 		StateTimer = 5.0f;
 		await WaitStateTimer();
 
@@ -72,18 +77,7 @@ public partial class JustAnotherGame
 		var player = client.Pawn as JustAnotherPlayer;
 
 		EventSoundsPlayed = 0;
-
-		// var triggerPlacement = All.OfType<TriggerOnce>().Where( x => x.Tags.Has( "freezer_trigger" ) ).First();
-		// var trigger = new TriggerOnce();
-		// trigger.Owner = this;
-		// trigger.Parent = this;
-		// trigger.ActivationTags.Add( "player" );
-		// trigger.Position = triggerPlacement.Position;
-		// trigger.Spawn();
-		// trigger.SetupPhysicsFromAABB( PhysicsMotionType.Keyframed,
-		// 	triggerPlacement.CollisionBounds.Mins, triggerPlacement.CollisionBounds.Maxs );
-		// trigger.ActivationTags.Add( "player" );
-
+		// Wait until the player finished picking up trash.
 		while (player.State == JustAnotherPlayer.PlayerStates.PickupTrash) {
 			StateTimer = 1;
 			await WaitStateTimer();
@@ -93,13 +87,15 @@ public partial class JustAnotherGame
 		TrashStaringCreep();
 
 		GameState = GameStates.FirstCustomer;
+		// Randomly wait until first customer comes.
 		StateTimer = Rand.Float( 5.0f, 10.0f );
 		await WaitStateTimer();
 
 		await FirstNormalCustomer();
 		Sound.FromEntity( "customer-beep", player );
-
+		// Wait until player is done taking out trash.
 		while (player.State == JustAnotherPlayer.PlayerStates.TakeOutTrashBags) {
+			// Randomly choose whether to play a sound or not.
 			if (ShouldPlaySound(1, 0.05f, player)) {
 				PlayRandomEventSound( player.EyePosition );
 			}
@@ -120,6 +116,7 @@ public partial class JustAnotherGame
 		// initiate weird customer.
 
 		while (player.State == JustAnotherPlayer.PlayerStates.WashDishes) {
+			// Randomly choose whether to play a sound or not.
 			if (ShouldPlaySound(1, 0.05f, player)) {
 				PlayRandomEventSound( player.EyePosition );
 			}
@@ -144,6 +141,7 @@ public partial class JustAnotherGame
 		StaringCreep();
 
 		while (player.State == JustAnotherPlayer.PlayerStates.MopFloors) {
+			// Randomly choose whether to play a sound or not.
 			if (ShouldPlaySound(2, 0.05f, player)) {
 				PlayRandomEventSound( player.EyePosition );
 			}
@@ -166,6 +164,7 @@ public partial class JustAnotherGame
 		backDoor.TimeBeforeReset = -1;
 
 		while (player.State == JustAnotherPlayer.PlayerStates.FixIceCreamMachine) {
+			// Randomly choose whether to play a sound or not.
 			if (ShouldPlaySound(1, 0.1f, player)) {
 				PlayRandomEventSound( player.EyePosition );
 			}
@@ -180,18 +179,7 @@ public partial class JustAnotherGame
 		// initiate freezer door opening and guy waiting in freezer.
 		FreezerCreep();
 
-		// Find the freezer door. The map should only have one.
-		// var freezerDoor = All.OfType<ControlledDoor>()
-		// 	.Where(x => x.Tags.Has("freezer_door"))
-		// 	.First();
-
-		// // Unlock the freezer door to open it.
-		// freezerDoor.Locked = false;
-		// // Open the door using the player so the sound plays in their ears.
-		// freezerDoor.OnUse( player );
-		// // Lock the door again so the player cannot use it.
-		// freezerDoor.Locked = true;
-
+		// Wait until the player is dead pretty much.
 		while (player.State == JustAnotherPlayer.PlayerStates.OrganizeFreezer) {
 			StateTimer = 1;
 			await WaitStateTimer();

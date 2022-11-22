@@ -6,6 +6,9 @@ My entry for the gvarados game jam entry.
 
 Here's some gameplay from a few of the judges.
 
+All custom assets are made by myself. Models, textures, sounds, and of course the code. To anyone who plays I hope you enjoy it. I poured my soul into this game
+for a solid 7 days.
+
 ## Gameplay
 
 Gvarados plays it twice so I'll link both times.

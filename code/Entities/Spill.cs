@@ -1,6 +1,6 @@
 using System.Linq;
 using Sandbox;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [OrthoBoundsHelper("range", "width", "height")]
@@ -71,10 +71,10 @@ public partial class Spill : ModelEntity, IUse, IEnablerDisabler
 
 	public bool OnUse( Entity user )
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return false;
 
-		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+		if ((GameManager.Current as JustAnotherGame).WaitingCustomer) {
 			SelfSpeak.Current.SayCustomerWaiting();
 			return false;
 		}

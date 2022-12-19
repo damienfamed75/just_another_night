@@ -1,7 +1,7 @@
 using System.Linq;
 using Sandbox;
 using Sandbox.Component;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [Model(Model = "models/rust_props/small_junk/ground_junk_a.vmdl")]
@@ -28,7 +28,7 @@ public partial class Trash : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return false;
 
 		if (HasBeenUsed)

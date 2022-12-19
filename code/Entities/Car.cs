@@ -1,6 +1,6 @@
 using System.Linq;
 using Sandbox;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [Model(Model = "models/car.vmdl")]
@@ -45,7 +45,7 @@ public partial class Car : ModelEntity, IUse
 			+ car.Rotation.Left * 42f
 			+ car.Rotation.Forward * 5f;
 
-		(Game.Current as JustAnotherGame).WaitingCustomer = false;
+		(GameManager.Current as JustAnotherGame).WaitingCustomer = false;
 	}
 
 	public Car()
@@ -100,7 +100,7 @@ public partial class Car : ModelEntity, IUse
 
 		var creep = Parent as Creep;
 		if (creep.HasBeenLookedAt && !HasDialogued && creep.CarSinceLookedAt > 1) {
-			if (IsClient) {
+			if (Game.IsClient) {
 				string message = MaterialGroup switch {
 					0 => ". . .", // the spaces are needed because my font is bad. :)
 					1 => "hey what's up",
@@ -112,9 +112,9 @@ public partial class Car : ModelEntity, IUse
 				dialogue.Position = Position + Vector3.Up * 58f + Rotation.Left * 35f + Rotation.Forward * 5f;
 
 				if (MaterialGroup == 1) {
-					Sound.FromEntity( "customer_1_speak", Local.Pawn );
+					Sound.FromEntity( "customer_1_speak", Game.LocalPawn );
 				} else if (MaterialGroup == 2) {
-					Sound.FromEntity( "customer_2_speak_first", Local.Pawn );
+					Sound.FromEntity( "customer_2_speak_first", Game.LocalPawn );
 				}
 
 				// Log.Info( "created speech bubble" );
@@ -137,7 +137,7 @@ public partial class Car : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return false;
 
 		if (!Finished) {
@@ -153,7 +153,7 @@ public partial class Car : ModelEntity, IUse
 		return true;
 	}
 
-	public override void Simulate( Client cl )
+	public override void Simulate( IClient cl )
 	{
 		base.Simulate( cl );
 
@@ -171,7 +171,7 @@ public partial class Car : ModelEntity, IUse
 		// if (IsClient)
 		// 	return;
 
-		if (IsClient) {
+		if (Game.IsClient) {
 			return;
 		}
 
@@ -195,7 +195,7 @@ public partial class Car : ModelEntity, IUse
 	[ClientRpc]
 	public void SecondText()
 	{
-		Sound.FromEntity( "customer_2_speak_second", Local.Pawn );
+		Sound.FromEntity( "customer_2_speak_second", Game.LocalPawn );
 		var dialogue = new Speech("be careful kid.");
 		dialogue.Position = Position + Vector3.Up * 58f + Rotation.Left * 35f + Rotation.Forward * 5f;
 	}

@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Sandbox;
 
 public partial class Creep : AnimatedMapEntity
@@ -30,9 +28,9 @@ public partial class Creep : AnimatedMapEntity
 	[Net]
 	public bool HasDialogued { get; set; } = false;
 
-	public bool BeingLookedAt => (Game.Current as JustAnotherGame).LookingAtCreep;
+	public bool BeingLookedAt => (GameManager.Current as JustAnotherGame).LookingAtCreep;
 
-	public RealTimeSince TimeSinceLookedAt => (Game.Current as JustAnotherGame).TimeSinceStare;
+	public RealTimeSince TimeSinceLookedAt => (GameManager.Current as JustAnotherGame).TimeSinceStare;
 
 	[Net]
 	public RealTimeSince CarSinceLookedAt { get; set; }
@@ -70,7 +68,7 @@ public partial class Creep : AnimatedMapEntity
 			SetMaterialGroup( MaterialGroup );
 	}
 
-	public override void Simulate( Client cl )
+	public override void Simulate( IClient cl )
 	{
 		base.Simulate( cl );
 
@@ -106,12 +104,12 @@ public partial class Creep : AnimatedMapEntity
 		// Rotation = Rotation.LookAt( cl.Pawn.Position - Position, Vector3.Up );
 	}
 
-	public void CarSimulate(Client cl)
+	public void CarSimulate(IClient cl)
 	{
 		if (PrevHasBeenLookedAt != HasBeenLookedAt) {
 			CarSinceLookedAt = 0;
 			if (MaterialGroup == 0)
-				Sound.FromEntity( "creep_car", cl.Pawn );
+				Sound.FromEntity( "creep_car", cl.Pawn as Entity );
 		}
 
 		var player = cl.Pawn as JustAnotherPlayer;
@@ -158,7 +156,7 @@ public partial class Creep : AnimatedMapEntity
 			if (MaterialGroup == 2 && car.TimeSinceFinished < 6)
 				continue;
 
-			if (IsClient) {
+			if (Game.IsClient) {
 				float dist = MathF.Abs( Position.Distance( SpawnLocation ) ) / 150f;
 				// Set the pitch to go up based on distance from the window.
 				car.RevSound.SetPitch(
@@ -192,14 +190,14 @@ public partial class Creep : AnimatedMapEntity
 		}
 	}
 
-	public void DeathSimulate(Client cl)
+	public void DeathSimulate(IClient cl)
 	{
 		// if (IsClient)
 		// 	return;
 
 		var player = cl.Pawn as JustAnotherPlayer;
 
-		if (IsServer) {
+		if (Game.IsServer) {
 			// Make sure we're facing the player
 			Rotation = Rotation.LookAt( player.Position.WithZ(0) - Position.WithZ(0), Vector3.Up );
 			Position += Rotation.Backward * 0.05f;
@@ -218,7 +216,7 @@ public partial class Creep : AnimatedMapEntity
 		}
 	}
 
-	public void KillSimulate(Client cl)
+	public void KillSimulate(IClient cl)
 	{
 		// If we've been looked at then you are officially deaded.
 		if (HasBeenLookedAt) {
@@ -229,7 +227,7 @@ public partial class Creep : AnimatedMapEntity
 				SetAnimation( "walk" );
 			}
 
-			if (IsClient)
+			if (Game.IsClient)
 				return;
 
 			var player = cl.Pawn as JustAnotherPlayer;
@@ -303,13 +301,13 @@ public partial class Creep : AnimatedMapEntity
 	[Net]
 	public RealTimeSince TimeSinceReachedGoal { get; set; }
 
-	public void WatchSimulate(Client cl)
+	public void WatchSimulate(IClient cl)
 	{
 		// If we were just looked at.
 		if (HasBeenLookedAt && !PrevHasBeenLookedAt) {
 			// Play the sound at the player.
-			if (IsServer)
-				Sound.FromEntity( "creep_watch", cl.Pawn );
+			if (Game.IsServer)
+				Sound.FromEntity( "creep_watch", cl.Pawn as Entity );
 		}
 
 		var targetAnim = "walk";
@@ -325,7 +323,7 @@ public partial class Creep : AnimatedMapEntity
 		}
 
 		// Don't advance any further than this if client.
-		if (IsClient)
+		if (Game.IsClient)
 			return;
 
 		var toLoc = All.OfType<NPCSpawn>().Where( x => x.Tags.Has( "creep_stare_end" ) ).FirstOrDefault();
@@ -396,13 +394,13 @@ public partial class Creep : AnimatedMapEntity
 		Rotation = Rotation.LookAt( lookAtTarget - Position, Vector3.Up );
 	}
 
-	public void TrashBagsSimulate(Client cl)
+	public void TrashBagsSimulate(IClient cl)
 	{
 		// If we were just looked at.
 		if (HasBeenLookedAt && !PrevHasBeenLookedAt) {
 			// Play the sound at the player.
-			if (IsServer)
-				Sound.FromEntity( "creep-trash-short", cl.Pawn );
+			if (Game.IsServer)
+				Sound.FromEntity( "creep-trash-short", cl.Pawn as Entity );
 		}
 
 		if (HasBeenLookedAt && TimeSinceLookedAt > 9.0f) {
@@ -412,7 +410,7 @@ public partial class Creep : AnimatedMapEntity
 				SetAnimation( "walk" );
 			}
 
-			if (IsClient)
+			if (Game.IsClient)
 				return;
 
 			var goal = All.OfType<NPCSpawn>()

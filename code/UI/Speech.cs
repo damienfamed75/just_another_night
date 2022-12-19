@@ -23,9 +23,7 @@ public class Speech : WorldPanel
 	{
 		base.Tick();
 
-		var player = Local.Pawn as JustAnotherPlayer;
-
-		var lookAt = player.CameraMode.Position - Position;
+		var lookAt = Camera.Position - Position;
 		Rotation = Rotation.LookAt( lookAt, Vector3.Up );
 
 		if (TimeUntilDeletion < 0) {

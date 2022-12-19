@@ -1,7 +1,7 @@
 using System;
 using Sandbox;
 using Sandbox.UI;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [Model(Model = "models/soda_machine.vmdl")]
@@ -39,10 +39,10 @@ public partial class IceCreamMachine : ModelEntity, IUse, IEnablerDisabler
 
 	public bool OnUse( Entity user )
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return false;
 
-		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+		if ((GameManager.Current as JustAnotherGame).WaitingCustomer) {
 			SelfSpeak.Current.SayCustomerWaiting();
 			return false;
 		}

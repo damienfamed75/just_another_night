@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Sandbox;
-using SandboxEditor;
+using Editor;
+using System;
 
 [HammerEntity]
 [CanBeClientsideOnly]
@@ -44,10 +45,12 @@ public partial class FlickeringLight : Entity
 	[Event.Tick]
 	public void Tick()
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return;
+
+		var rnd = new Random();
 		// Only call sometimes so it's not too fast and crazy.
-		if (Rand.Int(0,10) < 8)
+		if (rnd.Int(0,10) < 8)
 			return;
 
 		// Subtract from the last sum when there's too many steps in the queue.
@@ -55,7 +58,7 @@ public partial class FlickeringLight : Entity
 			lastSum -= SmoothingQueue.Dequeue();
 		}
 		// Create a new random value to our light values.
-		float newVal = Rand.Float( 0.0f, 1.0f );
+		float newVal = rnd.Float( 0.0f, 1.0f );
 		SmoothingQueue.Enqueue( newVal );
 		lastSum += newVal;
 		// Set the light's brightness.

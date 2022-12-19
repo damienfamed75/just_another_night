@@ -34,9 +34,9 @@ public class ActionButton : WorldPanel
 	{
 		base.Tick();
 
-		var player = Local.Pawn as JustAnotherPlayer;
+		var player = Game.LocalPawn as JustAnotherPlayer;
 
-		var lookAt = player.CameraMode.Position - Position;
+		var lookAt = Camera.Position - Position;
 		Rotation = Rotation.LookAt( lookAt, Vector3.Up );
 
 		Image.Style.BackgroundImage = Input.GetGlyph( InputButton.PrimaryAttack, InputGlyphSize.Small );

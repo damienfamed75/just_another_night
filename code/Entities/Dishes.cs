@@ -1,5 +1,5 @@
 using Sandbox;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 public partial class Dishes : ModelEntity, IUse, IEnablerDisabler
@@ -43,10 +43,10 @@ public partial class Dishes : ModelEntity, IUse, IEnablerDisabler
 
 	public bool OnUse( Entity user )
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return false;
 
-		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+		if ((GameManager.Current as JustAnotherGame).WaitingCustomer) {
 			SelfSpeak.Current.SayCustomerWaiting();
 			return false;
 		}

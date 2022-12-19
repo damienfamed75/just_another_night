@@ -1,6 +1,6 @@
 using System.Linq;
 using Sandbox;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [Model(Model = "models/dumpster.vmdl")]
@@ -40,7 +40,7 @@ public partial class Dumpster : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return false;
 
 		var player = user as JustAnotherPlayer;

@@ -1,3 +1,4 @@
+using System;
 using Sandbox;
 using Sandbox.UI;
 
@@ -30,7 +31,9 @@ public class SelfSpeak : Panel
 
 	public void SayCustomerArrive()
 	{
-		string message = Rand.Int( 0, 4 ) switch
+		var rnd = new Random();
+
+		string message = rnd.Int( 0, 4 ) switch
 		{
 			0 => "hoorah, another customer...",
 			1 => "great, a customer is here...",
@@ -43,7 +46,9 @@ public class SelfSpeak : Panel
 
 	public void SayTaskComplete()
 	{
-		string message = Rand.Int( 0, 4 ) switch
+		var rnd = new Random();
+
+		string message = rnd.Int( 0, 4 ) switch
 		{
 			0 => "that's a task done. better check the board for more.",
 			_ => "alright, let's check the board for what's next.",

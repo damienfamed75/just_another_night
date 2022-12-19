@@ -1,6 +1,6 @@
 using System.Linq;
 using Sandbox;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [Model(Model = "models/chore_list.vmdl")]

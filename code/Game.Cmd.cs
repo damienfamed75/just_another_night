@@ -80,7 +80,7 @@ public partial class JustAnotherGame
 			.First();
 
 		freezerDoor.Locked = false;
-		freezerDoor.OnUse( caller );
+		freezerDoor.OnUse( caller as Entity );
 		freezerDoor.Locked = true;
 	}
 
@@ -95,7 +95,7 @@ public partial class JustAnotherGame
 			.Where( x => x.Tags.Has( "back_door" ) )
 			.First();
 
-		backDoor.OnUse( caller );
+		backDoor.OnUse( caller as Entity );
 		backDoor.TimeBeforeReset = -1;
 	}
 

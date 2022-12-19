@@ -1,5 +1,5 @@
 using Sandbox;
-using SandboxEditor;
+using Editor;
 using Sandbox.Component;
 using System.Linq;
 
@@ -25,10 +25,10 @@ public partial class TrashBag : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
-		if (IsServer)
+		if (Game.IsServer)
 			return false;
 
-		if ((Game.Current as JustAnotherGame).WaitingCustomer) {
+		if ((GameManager.Current as JustAnotherGame).WaitingCustomer) {
 			SelfSpeak.Current.SayCustomerWaiting();
 			return false;
 		}
@@ -70,12 +70,14 @@ public partial class TrashBag : ModelEntity, IUse
 		Button.Prop = this;
 	}
 
-	public override void Simulate( Client cl )
+	public override void Simulate( IClient cl )
 	{
 		base.Simulate( cl );
 
-		Position = Owner.EyePosition + Owner.EyeRotation.Forward * 32f + Owner.EyeRotation.Down * 40f;
-		Rotation = Owner.EyeRotation;
+		var pl = Owner as JustAnotherPlayer;
+
+		Position = pl.EyePosition + pl.EyeRotation.Forward * 32f + pl.EyeRotation.Down * 40f;
+		Rotation = pl.EyeRotation;
 	}
 
 	protected override void OnDestroy()

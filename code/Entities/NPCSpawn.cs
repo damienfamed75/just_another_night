@@ -1,5 +1,5 @@
 using Sandbox;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [EditorSprite("editor/aiscripted_schedule.vmat")]

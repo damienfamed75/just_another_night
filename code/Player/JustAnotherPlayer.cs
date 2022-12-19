@@ -23,6 +23,9 @@ public partial class JustAnotherPlayer : Player
 	[Net]
 	public bool Incapacitated { get; set; }
 
+	[Net, Predicted]
+	public TimeSince TimeSinceIncapacitated { get; set; }
+
 	public bool PrevIncapacitated { get; set; }
 
 	[Net]
@@ -53,9 +56,9 @@ public partial class JustAnotherPlayer : Player
 		return ActiveChild == null;
 	}
 
-	public override void Spawn()
+	public override void Respawn()
 	{
-		base.Spawn();
+		base.Respawn();
 
 		SetModel( "models/citizen/citizen.vmdl" );
 
@@ -71,18 +74,20 @@ public partial class JustAnotherPlayer : Player
 		// Don't show how the citizen looks idk.
 		EnableShadowInFirstPerson = false;
 
-		Controller = new WalkController(){
-			SprintSpeed = WalkSpeed - 50,
-			WalkSpeed = WalkSpeed,
-			DefaultSpeed = WalkSpeed,
-			AirAcceleration = 0,
-			StopSpeed = 50,
-			Gravity = 1000,
-		};
-		Animator = new StandardPlayerAnimator();
-		CameraMode = new FirstPersonCamera{
-			ZNear = 2.5f // to compensate for the zooming in effect of chromatic abberation.
-		};
+		// Controller = new WalkController(){
+		// 	SprintSpeed = WalkSpeed - 50,
+		// 	WalkSpeed = WalkSpeed,
+		// 	DefaultSpeed = WalkSpeed,
+		// 	AirAcceleration = 0,
+		// 	StopSpeed = 50,
+		// 	Gravity = 1000,
+		// };
+
+		Controller = new WalkController();
+		// Animator = new StandardPlayerAnimator();
+		// CameraMode = new FirstPersonCamera{
+		// 	ZNear = 2.5f // to compensate for the zooming in effect of chromatic abberation.
+		// };
 
 		State = PlayerStates.PickupTrash;
 		EventTimer = 0;
@@ -97,17 +102,19 @@ public partial class JustAnotherPlayer : Player
 		Sound.FromEntity( "intro", this );
 	}
 
-	public override void Simulate( Client cl )
+	public override void Simulate( IClient cl )
 	{
 		if (Incapacitated && !PrevIncapacitated) {
 			EnableDrawing = false;
 			Controller = null;
-			Animator = null;
-			CameraMode = new DeathCamera();
+			// Animator = null;
+			// CameraMode = new DeathCamera();
 			var creep = All.OfType<Creep>().First();
 
 			DeathCameraPos = (creep.Position + creep.Rotation.Forward * 25f).WithZ( EyePosition.z );
 			TimeUntilDeath = 8;
+
+			TimeSinceIncapacitated = 0;
 
 			Sound.FromWorld( "death", EyePosition );
 
@@ -115,10 +122,10 @@ public partial class JustAnotherPlayer : Player
 		}
 		if (Incapacitated) {
 			// var creep = All.OfType<Creep>().First();
-			CameraMode.ZNear = 1f;
+			Camera.ZNear = 1f;
 
 			if (TimeUntilDeath < 3.5f && !PlayedDeathSound) {
-				if (IsServer) {
+				if (Game.IsServer) {
 					Sound.FromEntity( "end_game", this );
 					PlayedDeathSound = true;
 				}
@@ -138,13 +145,20 @@ public partial class JustAnotherPlayer : Player
 		if ( GetActiveController() is not WalkController ctrl )
 			return;
 
-		TickPlayerUse();
-
-		if (Input.ActiveChild != null) {
-			ActiveChild = Input.ActiveChild;
+		var controller = GetActiveController();
+		if (controller != null) {
+			SimulateAnimator( controller );
 		}
 
-		CameraMode.ZNear = 2.5f;
+		TickPlayerUse();
+
+		//! TODO idk yet
+		// if (Input.ActiveChild != null) {
+		// 	ActiveChild = Input.ActiveChild;
+		// }
+
+		// CameraMode.ZNear = 2.5f;
+		Camera.ZNear = 2.5f;
 
 		// Set some default speeds. (I don't like how I'm setting it every tick)
 		ctrl.DefaultSpeed = WalkSpeed;
@@ -181,9 +195,9 @@ public partial class JustAnotherPlayer : Player
 					return;
 				}
 
-				if (Using is not ControlledDoor && IsServer) {
+				if (Using is not ControlledDoor && Game.IsServer) {
 					return;
-				} else if ((Using is ControlledDoor || Using is DoorEntity) && IsClient) {
+				} else if ((Using is ControlledDoor || Using is DoorEntity) && Game.IsClient) {
 					return;
 				}
 			}
@@ -197,9 +211,9 @@ public partial class JustAnotherPlayer : Player
 			if ( !Using.IsValid() )
 				return;
 
-			if (Using is not ControlledDoor && IsServer) {
+			if (Using is not ControlledDoor && Game.IsServer) {
 				return;
-			} else if ((Using is ControlledDoor || Using is DoorEntity) && IsClient) {
+			} else if ((Using is ControlledDoor || Using is DoorEntity) && Game.IsClient) {
 				return;
 			}
 
@@ -215,15 +229,16 @@ public partial class JustAnotherPlayer : Player
 		}
 	}
 
-	public override void BuildInput( InputBuilder input )
+	public override void BuildInput()
 	{
-		// base.BuildInput( input );
+		base.BuildInput();
+
 		WorldInput.Ray = new Ray( EyePosition, EyeRotation.Forward );
-		WorldInput.MouseLeftPressed = input.Down( InputButton.PrimaryAttack );
+		WorldInput.MouseLeftPressed = Input.Down( InputButton.PrimaryAttack );
 
 		// Disallow jumping. This is a no fun zone.
-		if (input.Down(InputButton.Jump)) {
-			input.ClearButton( InputButton.Jump );
+		if (Input.Down(InputButton.Jump)) {
+			Input.ClearButton( InputButton.Jump );
 		}
 	}
 

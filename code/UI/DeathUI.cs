@@ -7,7 +7,7 @@ public class DeathUI : Panel
 
 	Label Credits;
 
-	public float Opacity { get; set; }
+	public float TargetOpacity { get; set; }
 
 	public DeathUI()
 	{
@@ -27,13 +27,13 @@ Damien#0812"
 	{
 		base.Tick();
 
-		var player = Local.Pawn as JustAnotherPlayer;
+		var player = Game.LocalPawn as JustAnotherPlayer;
 
 		if (!player.Incapacitated)
 			return;
 
-		Opacity = player.TimeUntilDeath.Relative.LerpInverse( 8, 4 );
-		Style.Opacity = Opacity;
+		TargetOpacity = player.TimeUntilDeath.Relative.LerpInverse( 8, 4 );
+		Style.Opacity = TargetOpacity;
 
 		GameLogo.SetClass( "active", player.TimeUntilDeath < -1.25f );
 

@@ -30,7 +30,7 @@ public partial class JustAnotherGame
 		FreezerUnlocks
 	}
 
-	private bool ShouldPlaySound(int max, float chance, Entity player)
+	private bool ShouldPlaySound(int max, float chance, JustAnotherPlayer player)
 	{
 		if (LookingAtCreep)
 			return false;
@@ -43,7 +43,9 @@ public partial class JustAnotherGame
 			return false;
 		}
 
-		if (EventSoundsPlayed < max && Rand.Float() < chance) {
+		var rnd = new Random();
+
+		if (EventSoundsPlayed < max && rnd.Float() < chance) {
 			return true;
 		}
 		return false;
@@ -56,7 +58,9 @@ public partial class JustAnotherGame
 
 		int max = PossibleSounds.Count-1;
 
-		var i = Rand.Int( 0, max );
+		var rnd = new Random();
+
+		var i = rnd.Int( 0, max );
 		var sound = PossibleSounds[i];
 		Sound.FromWorld( sound, pos + Rotation.Random.Forward * 15f );
 		PossibleSounds.RemoveAt( i );
@@ -73,7 +77,7 @@ public partial class JustAnotherGame
 		await WaitStateTimer();
 
 		// There should only be a single client since this is a singleplayer game.
-		var client = All.OfType<Client>().First();
+		var client = All.OfType<IClient>().First();
 		var player = client.Pawn as JustAnotherPlayer;
 
 		EventSoundsPlayed = 0;
@@ -88,7 +92,8 @@ public partial class JustAnotherGame
 
 		GameState = GameStates.FirstCustomer;
 		// Randomly wait until first customer comes.
-		StateTimer = Rand.Float( 5.0f, 10.0f );
+		var rnd = new Random();
+		StateTimer = rnd.Float( 5.0f, 10.0f );
 		await WaitStateTimer();
 
 		await FirstNormalCustomer();
@@ -104,13 +109,13 @@ public partial class JustAnotherGame
 		}
 
 		GameState = GameStates.WeirdCustomer;
-		StateTimer = Rand.Float( 5.0f, 8.0f );
+		StateTimer = rnd.Float( 5.0f, 8.0f );
 		await WaitStateTimer();
 		// Delete the creep from staring down the path.
 		await CreepCustomer();
 		Sound.FromEntity( "customer-beep", player );
 
-		StateTimer = Rand.Float( 1.0f, 2.0f );
+		StateTimer = rnd.Float( 1.0f, 2.0f );
 		await WaitStateTimer();
 
 		// initiate weird customer.
@@ -125,14 +130,14 @@ public partial class JustAnotherGame
 		}
 
 		GameState = GameStates.SecondNormalCustomerAndWeirdGuyStaring;
-		StateTimer = Rand.Float( 1.0f, 5.0f );
+		StateTimer = rnd.Float( 1.0f, 5.0f );
 		await WaitStateTimer();
 
 		await SecondNormalCustomer();
 		Sound.FromEntity( "customer-beep", player );
 		// initiate second normal customer.
 
-		StateTimer = Rand.Float( 1.0f, 5.0f );
+		StateTimer = rnd.Float( 1.0f, 5.0f );
 		await WaitStateTimer();
 
 		// initiate customer staring through windows.
@@ -150,7 +155,7 @@ public partial class JustAnotherGame
 		}
 
 		GameState = GameStates.BackDoorOpens;
-		StateTimer = Rand.Float( 0.0f, 1.0f );
+		StateTimer = rnd.Float( 0.0f, 1.0f );
 		await WaitStateTimer();
 
 		// initiate back door opening.
@@ -173,7 +178,7 @@ public partial class JustAnotherGame
 		}
 
 		GameState = GameStates.FreezerUnlocks;
-		StateTimer = Rand.Float( 1.0f, 2.0f );
+		StateTimer = rnd.Float( 1.0f, 2.0f );
 		await WaitStateTimer();
 
 		// initiate freezer door opening and guy waiting in freezer.

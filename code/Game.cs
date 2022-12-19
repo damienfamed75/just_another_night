@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 /// You can use this to create things like HUDs and declare which player class
 /// to use for spawned players.
 /// </summary>
-public partial class JustAnotherGame : Sandbox.Game
+public partial class JustAnotherGame : Sandbox.GameManager
 {
 	[Net]
 	JustAnotherHud Hud { get; set; }
@@ -38,7 +38,7 @@ public partial class JustAnotherGame : Sandbox.Game
 
 	public JustAnotherGame()
 	{
-		if (IsServer) {
+		if (Game.IsServer) {
 			//
 			// A list of random sounds that could play throughout the game.
 			//
@@ -71,7 +71,7 @@ public partial class JustAnotherGame : Sandbox.Game
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>
-	public override void ClientJoined( Client client )
+	public override void ClientJoined( IClient client )
 	{
 		base.ClientJoined( client );
 
@@ -79,6 +79,8 @@ public partial class JustAnotherGame : Sandbox.Game
 		// var pawn = new Pawn();
 		// client.Pawn = pawn;
 		var pawn = new JustAnotherPlayer();
+		pawn.Respawn();
+
 		client.Pawn = pawn;
 
 		// Get all of the spawnpoints
@@ -103,7 +105,7 @@ public partial class JustAnotherGame : Sandbox.Game
 	/// Called each frame on the client only to simulate things that need to be
 	/// updated every frame.
 	/// </summary>
-	public override void FrameSimulate( Client cl )
+	public override void FrameSimulate( IClient cl )
 	{
 		base.FrameSimulate( cl );
 
@@ -114,7 +116,7 @@ public partial class JustAnotherGame : Sandbox.Game
 
 		var player = cl.Pawn as JustAnotherPlayer;
 
-		var effects = Map.Camera.FindOrCreateHook<Sandbox.Effects.ScreenEffects>();
+		var effects = Camera.Main.FindOrCreateHook<Sandbox.Effects.ScreenEffects>();
 		effects.ChromaticAberration.Scale = 1.0f;
 		effects.Contrast = 1.015f; // Very slightly increase contrast.
 		effects.FilmGrain.Response = 1f; // Only show grain in dark areas.
@@ -150,7 +152,7 @@ public partial class JustAnotherGame : Sandbox.Game
 	/// Serverside: Called for each client every tick
 	/// Clientside: Called for each tick for local client. Can be called multiple times per tick.
 	/// </summary>
-	public override void Simulate( Client cl )
+	public override void Simulate( IClient cl )
 	{
 		base.Simulate( cl );
 
@@ -159,7 +161,7 @@ public partial class JustAnotherGame : Sandbox.Game
 		//
 		var player = cl.Pawn as JustAnotherPlayer;
 		if (player.Incapacitated && player.TimeUntilDeath < -30f) {
-			if (IsServer) {
+			if (Game.IsServer) {
 				cl.Kick();
 				return;
 			}
@@ -193,13 +195,15 @@ public partial class JustAnotherGame : Sandbox.Game
 		}
 	}
 
-	public void CheckForCreep(Client cl, Creep creep)
+	public void CheckForCreep(IClient cl, Creep creep)
 	{
 		var player = cl.Pawn as Player;
 
+		var rnd = new Random();
+
 		// Only check every so often.
 		// this is pretty hacky but this is a game jam entry afterall.
-		if (Rand.Int(0,10) < 9) {
+		if (rnd.Int(0,10) < 9) {
 			return;
 		}
 

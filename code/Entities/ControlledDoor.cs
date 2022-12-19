@@ -1,5 +1,5 @@
 using Sandbox;
-using SandboxEditor;
+using Editor;
 
 [HammerEntity]
 [Library("ent_controlled_door")]

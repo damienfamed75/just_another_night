@@ -2,9 +2,13 @@ using Sandbox;
 using Editor;
 using Sandbox.Component;
 using System.Linq;
+using JustAnotherNight.Player;
+using JustAnotherNight.UI;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
-[EditorModel("models/trash_bag.vmdl")]
+[EditorModel( "models/trash_bag.vmdl" )]
 public partial class TrashBag : ModelEntity, IUse
 {
 	public ActionButton Button;
@@ -25,17 +29,18 @@ public partial class TrashBag : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
-		if (Game.IsServer)
+		if ( Game.IsServer )
 			return false;
 
-		if ((GameManager.Current as JustAnotherGame).WaitingCustomer) {
+		if ( (GameManager.Current as JustAnotherGame).WaitingCustomer )
+		{
 			SelfSpeak.Current.SayCustomerWaiting();
 			return false;
 		}
 
 		var player = user as JustAnotherPlayer;
 		// Double check that the player has space for the item.
-		if (!player.HasRoomForItem())
+		if ( !player.HasRoomForItem() )
 			return false;
 
 		// Delete the button since we've picked it up.

@@ -2,6 +2,9 @@ using Sandbox;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.Entities;
 
 public class NavPath
 {

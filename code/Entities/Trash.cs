@@ -2,6 +2,10 @@ using System.Linq;
 using Sandbox;
 using Sandbox.Component;
 using Editor;
+using JustAnotherNight.Player;
+using JustAnotherNight.UI;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
 [Model(Model = "models/rust_props/small_junk/ground_junk_a.vmdl")]

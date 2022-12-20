@@ -1,5 +1,8 @@
 using Sandbox;
 using Editor;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
 [Library("ent_controlled_door")]

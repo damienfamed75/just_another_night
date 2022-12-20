@@ -2,16 +2,21 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using JustAnotherNight.Basic;
 using Sandbox;
 using Sandbox.Component;
 using Sandbox.UI;
+using JustAnotherNight.UI;
+using JustAnotherNight.Entities;
 
-public partial class JustAnotherPlayer : Player
+namespace JustAnotherNight.Player;
+
+public partial class JustAnotherPlayer : Basic.Player
 {
 	[Net, Change]
 	public PlayerStates State { get; set; } = PlayerStates.PickupTrash;
 
-	public void OnStateChanged(PlayerStates oldValue, PlayerStates newValue)
+	public void OnStateChanged( PlayerStates oldValue, PlayerStates newValue )
 	{
 		SelfSpeak.Current.SayTaskComplete();
 		ConsoleSystem.Run( "increment_chore" );
@@ -83,7 +88,7 @@ public partial class JustAnotherPlayer : Player
 		// 	Gravity = 1000,
 		// };
 
-		Controller = new WalkController();
+		Controller = new WalkingController();
 		// Animator = new StandardPlayerAnimator();
 		// CameraMode = new FirstPersonCamera{
 		// 	ZNear = 2.5f // to compensate for the zooming in effect of chromatic abberation.
@@ -104,7 +109,8 @@ public partial class JustAnotherPlayer : Player
 
 	public override void Simulate( IClient cl )
 	{
-		if (Incapacitated && !PrevIncapacitated) {
+		if ( Incapacitated && !PrevIncapacitated )
+		{
 			EnableDrawing = false;
 			Controller = null;
 			// Animator = null;
@@ -120,12 +126,15 @@ public partial class JustAnotherPlayer : Player
 
 			PrevIncapacitated = Incapacitated;
 		}
-		if (Incapacitated) {
+		if ( Incapacitated )
+		{
 			// var creep = All.OfType<Creep>().First();
 			Camera.ZNear = 1f;
 
-			if (TimeUntilDeath < 3.5f && !PlayedDeathSound) {
-				if (Game.IsServer) {
+			if ( TimeUntilDeath < 3.5f && !PlayedDeathSound )
+			{
+				if ( Game.IsServer )
+				{
 					Sound.FromEntity( "end_game", this );
 					PlayedDeathSound = true;
 				}
@@ -142,11 +151,12 @@ public partial class JustAnotherPlayer : Player
 		base.Simulate( cl );
 
 		// Get the current active controller.
-		if ( GetActiveController() is not WalkController ctrl )
+		if ( GetActiveController() is not WalkingController ctrl )
 			return;
 
 		var controller = GetActiveController();
-		if (controller != null) {
+		if ( controller != null )
+		{
 			SimulateAnimator( controller );
 		}
 
@@ -168,7 +178,8 @@ public partial class JustAnotherPlayer : Player
 		SimulateActiveChild( cl, ActiveChild );
 
 		// If we have something equipped then adjust our movement speeds.
-		if (ActiveChild != null) {
+		if ( ActiveChild != null )
+		{
 			ctrl.DefaultSpeed = 100;
 			ctrl.WalkSpeed = 100;
 			ctrl.SprintSpeed = 50;
@@ -195,9 +206,12 @@ public partial class JustAnotherPlayer : Player
 					return;
 				}
 
-				if (Using is not ControlledDoor && Game.IsServer) {
+				if ( Using is not ControlledDoor && Game.IsServer )
+				{
 					return;
-				} else if ((Using is ControlledDoor || Using is DoorEntity) && Game.IsClient) {
+				}
+				else if ( (Using is ControlledDoor || Using is DoorEntity) && Game.IsClient )
+				{
 					return;
 				}
 			}
@@ -211,9 +225,12 @@ public partial class JustAnotherPlayer : Player
 			if ( !Using.IsValid() )
 				return;
 
-			if (Using is not ControlledDoor && Game.IsServer) {
+			if ( Using is not ControlledDoor && Game.IsServer )
+			{
 				return;
-			} else if ((Using is ControlledDoor || Using is DoorEntity) && Game.IsClient) {
+			}
+			else if ( (Using is ControlledDoor || Using is DoorEntity) && Game.IsClient )
+			{
 				return;
 			}
 
@@ -237,14 +254,16 @@ public partial class JustAnotherPlayer : Player
 		WorldInput.MouseLeftPressed = Input.Down( InputButton.PrimaryAttack );
 
 		// Disallow jumping. This is a no fun zone.
-		if (Input.Down(InputButton.Jump)) {
+		if ( Input.Down( InputButton.Jump ) )
+		{
 			Input.ClearButton( InputButton.Jump );
 		}
 	}
 
 	public override float FootstepVolume()
 	{
-		if (Incapacitated) {
+		if ( Incapacitated )
+		{
 			return 0f;
 		}
 

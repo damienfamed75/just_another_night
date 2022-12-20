@@ -1,5 +1,8 @@
 using Sandbox;
 using System;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.Entities;
 
 public class NavSteer
 {

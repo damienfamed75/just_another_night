@@ -1,4 +1,7 @@
 using Sandbox.UI;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.UI;
 
 public class RootHud : RootPanel
 {

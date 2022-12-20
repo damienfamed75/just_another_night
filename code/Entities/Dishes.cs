@@ -1,5 +1,9 @@
 using Sandbox;
 using Editor;
+using JustAnotherNight.Player;
+using JustAnotherNight.UI;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
 public partial class Dishes : ModelEntity, IUse, IEnablerDisabler

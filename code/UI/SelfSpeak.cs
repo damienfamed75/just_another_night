@@ -1,6 +1,9 @@
 using System;
 using Sandbox;
 using Sandbox.UI;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.UI;
 
 public class SelfSpeak : Panel
 {

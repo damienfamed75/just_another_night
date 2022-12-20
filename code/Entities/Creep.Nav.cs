@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using Sandbox;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.Entities;
 
 public partial class Creep
 {
@@ -9,8 +12,8 @@ public partial class Creep
 
 	public void FindTarget()
     {
-		target = All
-			.OfType<Player>()
+		target = Entity.All
+			.OfType<Basic.Player>()
 			.OrderBy( x => Guid.NewGuid() ) // Order randomly
 			.FirstOrDefault();
 

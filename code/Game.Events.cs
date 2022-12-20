@@ -1,5 +1,9 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Sandbox;
+using JustAnotherNight.Entities;
+
+namespace JustAnotherNight;
 
 public partial class JustAnotherGame
 {
@@ -12,13 +16,13 @@ public partial class JustAnotherGame
 
 	public void TrashStaringCreep()
 	{
-		var creep = SpawnCreep("creep_trash");
+		var creep = SpawnCreep( "creep_trash" );
 		creep.State = Creep.CreepStates.TakeOutTrashBags;
 	}
 
 	public void StaringCreep()
 	{
-		var creep = SpawnCreep("creep_stare");
+		var creep = SpawnCreep( "creep_stare" );
 		creep.State = Creep.CreepStates.WatchOutsideBuilding;
 	}
 
@@ -30,7 +34,8 @@ public partial class JustAnotherGame
 
 	private async Task WaitUntilCustomerIsGone()
 	{
-		while (WaitingCustomer) {
+		while ( WaitingCustomer )
+		{
 			StateTimer = 1;
 			await WaitStateTimer();
 		}
@@ -57,14 +62,15 @@ public partial class JustAnotherGame
 		SpawnCustomer( 2 ); // Material Group 2
 	}
 
-	private void SpawnCustomer(int group = 0)
+	private void SpawnCustomer( int group = 0 )
 	{
 		var creep = SpawnCreep( "car_spawn", group );
 		creep.State = Creep.CreepStates.Car;
 		creep.Position += Rotation.Forward * 200f;
 
 		// Create a new car and move the car to the creep location.
-		var car = new Car {
+		var car = new Car
+		{
 			Parent = creep,
 			Driving = true,
 			MaterialGroup = group,
@@ -80,9 +86,10 @@ public partial class JustAnotherGame
 	/// <summary>
 	/// Do not use this.
 	/// </summary>
-	private Creep SpawnCreep(string locationTag, int matGroup = 0)
+	private Creep SpawnCreep( string locationTag, int matGroup = 0 )
 	{
-		var creep = new Creep {
+		var creep = new Creep
+		{
 			Parent = this,
 			MaterialGroup = matGroup
 		};
@@ -91,7 +98,7 @@ public partial class JustAnotherGame
 			.Where( x => x.Tags.Has( locationTag ) )
 			.FirstOrDefault();
 
-		if (spawnpoint != null)
+		if ( spawnpoint != null )
 			creep.Transform = spawnpoint.Transform;
 
 		creep.Spawn();

@@ -1,5 +1,8 @@
 using Sandbox;
 using Sandbox.UI;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.UI;
 
 public class DeathUI : Panel
 {
@@ -11,7 +14,7 @@ public class DeathUI : Panel
 
 	public DeathUI()
 	{
-		GameLogo = AddChild<Panel>("game-logo");
+		GameLogo = AddChild<Panel>( "game-logo" );
 		GameLogo.Style.BackgroundImage = Texture.Load( FileSystem.Mounted, "images/logo.png" );
 
 		Credits = AddChild<Label>( "credits" );
@@ -29,7 +32,7 @@ Damien#0812"
 
 		var player = Game.LocalPawn as JustAnotherPlayer;
 
-		if (!player.Incapacitated)
+		if ( !player.Incapacitated )
 			return;
 
 		TargetOpacity = player.TimeUntilDeath.Relative.LerpInverse( 8, 4 );

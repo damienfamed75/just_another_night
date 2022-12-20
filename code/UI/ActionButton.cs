@@ -2,6 +2,10 @@ using System.Linq;
 using Sandbox;
 using Sandbox.Component;
 using Sandbox.UI;
+using JustAnotherNight.Player;
+using JustAnotherNight.Entities;
+
+namespace JustAnotherNight.UI;
 
 public class ActionButton : WorldPanel
 {

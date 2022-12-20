@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using JustAnotherNight.Player;
+using JustAnotherNight.Entities;
+using JustAnotherNight.UI;
+
+namespace JustAnotherNight;
 
 /// <summary>
 /// This is your game class. This is an entity that is created serverside when
@@ -38,7 +43,8 @@ public partial class JustAnotherGame : Sandbox.GameManager
 
 	public JustAnotherGame()
 	{
-		if (Game.IsServer) {
+		if ( Game.IsServer )
+		{
 			//
 			// A list of random sounds that could play throughout the game.
 			//
@@ -111,7 +117,7 @@ public partial class JustAnotherGame : Sandbox.GameManager
 
 		// If the player hasn't been in the game for more than 5 seconds yet
 		// then do not apply the post-processing effects.
-		if (TimeSinceClientJoined < 5)
+		if ( TimeSinceClientJoined < 5 )
 			return;
 
 		var player = cl.Pawn as JustAnotherPlayer;
@@ -125,25 +131,28 @@ public partial class JustAnotherGame : Sandbox.GameManager
 		effects.Pixelation = 0.15f; // 0.1f is also good. 0.2f is more accurate to PSX
 
 		// If you're looking at at creep or the player is incapacitated.
-		if (LookingAtCreep || player.Incapacitated) {
+		if ( LookingAtCreep || player.Incapacitated )
+		{
 			var delta = Time.Delta / 4f;
 			// Increase vignette.
 			effects.Vignette.Intensity = (effects.Vignette.Intensity + delta).Clamp( 0.0f, 0.6f );
 			// Intensify the chromatic abberation by making the offset greater.
 			effects.ChromaticAberration.Offset = new Vector3(
-				(effects.ChromaticAberration.Offset.x + delta/75).Clamp( 0.0025f, 0.005f ),
-				(effects.ChromaticAberration.Offset.y + delta/75).Clamp( 0.0025f, 0.01f ),
-				(effects.ChromaticAberration.Offset.z + delta/75).Clamp( 0.001f, 0.015f )
+				(effects.ChromaticAberration.Offset.x + delta / 75).Clamp( 0.0025f, 0.005f ),
+				(effects.ChromaticAberration.Offset.y + delta / 75).Clamp( 0.0025f, 0.01f ),
+				(effects.ChromaticAberration.Offset.z + delta / 75).Clamp( 0.001f, 0.015f )
 			);
-		} else {
+		}
+		else
+		{
 			var delta = Time.Delta / 4f;
 			// Decrease vignette.
 			effects.Vignette.Intensity = (effects.Vignette.Intensity - delta).Clamp( 0.0f, 1.0f );
 			// Decrease chromatic abberation offset.
 			effects.ChromaticAberration.Offset = new Vector3(
-				(effects.ChromaticAberration.Offset.x - delta/75).Clamp( 0.0025f, 1.0f ),
-				(effects.ChromaticAberration.Offset.y - delta/75).Clamp( 0.0025f, 1.0f ),
-				(effects.ChromaticAberration.Offset.z - delta/75).Clamp( 0.001f, 1.0f )
+				(effects.ChromaticAberration.Offset.x - delta / 75).Clamp( 0.0025f, 1.0f ),
+				(effects.ChromaticAberration.Offset.y - delta / 75).Clamp( 0.0025f, 1.0f ),
+				(effects.ChromaticAberration.Offset.z - delta / 75).Clamp( 0.001f, 1.0f )
 			);
 		}
 	}
@@ -160,8 +169,10 @@ public partial class JustAnotherGame : Sandbox.GameManager
 		// Disconnect the player when the game is over.
 		//
 		var player = cl.Pawn as JustAnotherPlayer;
-		if (player.Incapacitated && player.TimeUntilDeath < -30f) {
-			if (Game.IsServer) {
+		if ( player.Incapacitated && player.TimeUntilDeath < -30f )
+		{
+			if ( Game.IsServer )
+			{
 				cl.Kick();
 				return;
 			}
@@ -169,51 +180,56 @@ public partial class JustAnotherGame : Sandbox.GameManager
 
 		// All children in this will be of type Creep.
 		// So this loop is specifically only for updating creeps spawned on the map.
-		foreach (var child in Children) {
+		foreach ( var child in Children )
+		{
 			// Simulate the child.
 			child.Simulate( cl );
 
-			if (child is not Creep creep)
+			if ( child is not Creep creep )
 				continue;
 
 			// Check to see if the player can see this creep.
 			CheckForCreep( cl, creep );
 			// If this creep is marked as finished, then delete them.
-			if (creep.Finished) {
+			if ( creep.Finished )
+			{
 				creep.Delete();
 				break;
 			}
 			// If we're looking at this creep then break.
-			if (LookingAtCreep)
+			if ( LookingAtCreep )
 				break;
 		}
 
 		// If there aren't any creeps on the map then you're not looking at one.
 		// note: This is to fix when looking at a creep when they delete.
-		if (!All.OfType<Creep>().Any()) {
+		if ( !All.OfType<Creep>().Any() )
+		{
 			LookingAtCreep = false;
 		}
 	}
 
-	public void CheckForCreep(IClient cl, Creep creep)
+	public void CheckForCreep( IClient cl, Creep creep )
 	{
-		var player = cl.Pawn as Player;
+		var player = cl.Pawn as Basic.Player;
 
 		var rnd = new Random();
 
 		// Only check every so often.
 		// this is pretty hacky but this is a game jam entry afterall.
-		if (rnd.Int(0,10) < 9) {
+		if ( rnd.Int( 0, 10 ) < 9 )
+		{
 			return;
 		}
 
-		if (creep != null && creep.IsValid()) {
+		if ( creep != null && creep.IsValid() )
+		{
 			// Trace forward from where the player is looking.
 			var ray = new Ray(
 				player.EyePosition, player.EyeRotation.Forward
 			);
 			var tr = Trace.Ray( ray, player.Position.Distance( creep.Position ) )
-				.WithAnyTags("creep", "solid")
+				.WithAnyTags( "creep", "solid" )
 				.Run();
 
 			// Check the distance of where we're looking to this creep.
@@ -227,8 +243,10 @@ public partial class JustAnotherGame : Sandbox.GameManager
 
 			// If the distance is less than 1000 then they're considered on the
 			// screen and we're looking at them.
-			if (distance < 1000.0f && tr.Entity == creep && angle < 60.0f) {
-				if (!LookingAtCreep) {
+			if ( distance < 1000.0f && tr.Entity == creep && angle < 60.0f )
+			{
+				if ( !LookingAtCreep )
+				{
 					creep.LookedAt();
 					TimeSinceStare = 0;
 					// if (creep.State != Creep.CreepStates.Car)
@@ -236,14 +254,17 @@ public partial class JustAnotherGame : Sandbox.GameManager
 					// If this material group is zero then that means it's the
 					// ACTUAL creep and not a customer or someone else.
 					// this needs a constant.
-					if (creep.MaterialGroup == 0)
+					if ( creep.MaterialGroup == 0 )
 						LookingAtCreep = true;
 				}
-			} else {
+			}
+			else
+			{
 				// Since we're not currently looking at a creep,
 				// if we are already looking at a creep, then just override it
 				// and say we're not looking at a creep.
-				if (LookingAtCreep) {
+				if ( LookingAtCreep )
+				{
 					TimeUntilDecayEffects = 5;
 					LookingAtCreep = false;
 				}

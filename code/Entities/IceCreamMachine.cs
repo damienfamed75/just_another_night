@@ -2,6 +2,10 @@ using System;
 using Sandbox;
 using Sandbox.UI;
 using Editor;
+using JustAnotherNight.Player;
+using JustAnotherNight.UI;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
 [Model(Model = "models/soda_machine.vmdl")]

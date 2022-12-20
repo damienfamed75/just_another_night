@@ -1,8 +1,11 @@
+using JustAnotherNight.Basic;
 using Sandbox;
+
+namespace JustAnotherNight.Player;
 
 public partial class JustAnotherPlayer
 {
-	void SimulateAnimator( PawnController controller )
+	void SimulateAnimator( BasicController controller )
 	{
 		if (controller == null)
 			return;
@@ -16,7 +19,7 @@ public partial class JustAnotherPlayer
 		Rotation = Rotation.Slerp( Rotation, idealRotation, controller.WishVelocity.Length * Time.Delta * turnSpeed );
 		Rotation = Rotation.Clamp( idealRotation, 45.0f, out var shuffle );
 
-		CitizenAnimationHelper animHelper = new CitizenAnimationHelper( this );
+		CitizenAnimationHelper animHelper = new( this );
 
 		animHelper.WithWishVelocity( controller.WishVelocity );
 		animHelper.WithVelocity( controller.Velocity );

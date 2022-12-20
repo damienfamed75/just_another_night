@@ -1,6 +1,10 @@
 using System.Linq;
 using Sandbox;
 using Editor;
+using JustAnotherNight.Player;
+using JustAnotherNight.UI;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
 [Model(Model = "models/car.vmdl")]

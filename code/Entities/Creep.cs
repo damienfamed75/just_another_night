@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using Sandbox;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.Entities;
 
 public partial class Creep : AnimatedMapEntity
 {

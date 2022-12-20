@@ -1,5 +1,9 @@
 using System.Linq;
 using Sandbox;
+using JustAnotherNight.Player;
+using JustAnotherNight.Entities;
+
+namespace JustAnotherNight;
 
 public partial class JustAnotherGame
 {
@@ -7,23 +11,23 @@ public partial class JustAnotherGame
 	/// DeleteEntity is a command to the server to delete an entity with the
 	/// given name
 	/// </summary>
-	[ConCmd.Server("delete_ent")]
-	public static void DeleteEntity(string name)
+	[ConCmd.Server( "delete_ent" )]
+	public static void DeleteEntity( string name )
 	{
 		var ent = All.OfType<Entity>().Where( x => x.Name == name ).FirstOrDefault();
 
-		if (ent != null && ent.IsValid)
+		if ( ent != null && ent.IsValid )
 			ent.Delete();
 	}
 
 	/// <summary>
 	/// Increment the player's task.
 	/// </summary>
-	[ConCmd.Server("increment_task")]
+	[ConCmd.Server( "increment_task" )]
 	public static void IncrementTask()
 	{
 		var game = Current as JustAnotherGame;
-		if (game.TimeSinceStateChanged < 5)
+		if ( game.TimeSinceStateChanged < 5 )
 			return;
 
 		var player = ConsoleSystem.Caller.Pawn as JustAnotherPlayer;
@@ -34,8 +38,8 @@ public partial class JustAnotherGame
 	/// <summary>
 	/// Equip an entity. This is used for trash bags.
 	/// </summary>
-	[ConCmd.Server("equip_ent")]
-	public static void EquipEntity(string name)
+	[ConCmd.Server( "equip_ent" )]
+	public static void EquipEntity( string name )
 	{
 		var player = ConsoleSystem.Caller.Pawn as JustAnotherPlayer;
 		var ent = All.OfType<Entity>().Where( x => x.Name == name ).First();
@@ -47,11 +51,11 @@ public partial class JustAnotherGame
 	/// <summary>
 	/// Unequip an equipped entity. This is used for trash bags.
 	/// </summary>
-	[ConCmd.Server("unequip_ent")]
+	[ConCmd.Server( "unequip_ent" )]
 	public static void UnEquipEntity()
 	{
 		var player = ConsoleSystem.Caller.Pawn as JustAnotherPlayer;
-		if (player.ActiveChild == null)
+		if ( player.ActiveChild == null )
 			return;
 
 		player.ActiveChild.Delete();
@@ -62,7 +66,7 @@ public partial class JustAnotherGame
 	/// Spawn in the staring creep outside the building starting into the
 	/// second window.
 	/// </summary>
-	[ConCmd.Admin("creep_stare")]
+	[ConCmd.Admin( "creep_stare" )]
 	public static void SpawnStaringCreep()
 	{
 		(Current as JustAnotherGame).StaringCreep();
@@ -71,7 +75,7 @@ public partial class JustAnotherGame
 	/// <summary>
 	/// Open the freezer door of the restaurant.
 	/// </summary>
-	[ConCmd.Admin("freezer_open")]
+	[ConCmd.Admin( "freezer_open" )]
 	public static void OpenFreezerDoor()
 	{
 		var caller = ConsoleSystem.Caller.Pawn;
@@ -87,7 +91,7 @@ public partial class JustAnotherGame
 	/// <summary>
 	/// Open the backdoor of the restaurant.
 	/// </summary>
-	[ConCmd.Admin("back_open")]
+	[ConCmd.Admin( "back_open" )]
 	public static void OpenBackDoor()
 	{
 		var caller = ConsoleSystem.Caller.Pawn;
@@ -102,7 +106,7 @@ public partial class JustAnotherGame
 	/// <summary>
 	/// Spawn the creep to kill the player in the freezer.
 	/// </summary>
-	[ConCmd.Admin("death")]
+	[ConCmd.Admin( "death" )]
 	public static void DeathSpawn()
 	{
 		OpenFreezerDoor();
@@ -113,9 +117,9 @@ public partial class JustAnotherGame
 	/// Spawn a customer with the given material group.
 	/// </summary>
 	/// <param name="group">Material Group of the Creep model</param>
-	[ConCmd.Admin("spawn_customer")]
-	public static void TestingSpawnCustomer(int group)
+	[ConCmd.Admin( "spawn_customer" )]
+	public static void TestingSpawnCustomer( int group )
 	{
-		(Current as JustAnotherGame).SpawnCustomer(group);
+		(Current as JustAnotherGame).SpawnCustomer( group );
 	}
 }

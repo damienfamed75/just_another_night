@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using Sandbox;
 using Editor;
 using System;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
 [CanBeClientsideOnly]

@@ -1,6 +1,9 @@
 using System.Linq;
 using Sandbox;
 using Editor;
+using JustAnotherNight.Player;
+
+namespace JustAnotherNight.Entities;
 
 [HammerEntity]
 [Model(Model = "models/chore_list.vmdl")]

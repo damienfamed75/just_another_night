@@ -1,5 +1,8 @@
 using System.Linq;
 using Sandbox;
+using JustAnotherNight.Entities;
+
+namespace JustAnotherNight.Player;
 
 public partial class JustAnotherPlayer
 {

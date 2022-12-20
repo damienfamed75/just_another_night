@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sandbox;
+using JustAnotherNight.Player;
+using JustAnotherNight.Entities;
+
+namespace JustAnotherNight;
 
 public partial class JustAnotherGame
 {
@@ -19,7 +23,7 @@ public partial class JustAnotherGame
 	public int EventSoundsPlayed { get; set; } = 0;
 
 	[Net]
-	public List<string> PossibleSounds { get; set; }
+	public IList<string> PossibleSounds { get; set; }
 
 	public enum GameStates
 	{
@@ -30,33 +34,35 @@ public partial class JustAnotherGame
 		FreezerUnlocks
 	}
 
-	private bool ShouldPlaySound(int max, float chance, JustAnotherPlayer player)
+	private bool ShouldPlaySound( int max, float chance, JustAnotherPlayer player )
 	{
-		if (LookingAtCreep)
+		if ( LookingAtCreep )
 			return false;
 
 		var tr = Trace.Ray( new Ray(
 			player.EyePosition, Vector3.Up
-		), 200f ).WithTag("solid").Run();
-		if (!tr.Hit) {
+		), 200f ).WithTag( "solid" ).Run();
+		if ( !tr.Hit )
+		{
 			Log.Info( "player is outside" );
 			return false;
 		}
 
 		var rnd = new Random();
 
-		if (EventSoundsPlayed < max && rnd.Float() < chance) {
+		if ( EventSoundsPlayed < max && rnd.Float() < chance )
+		{
 			return true;
 		}
 		return false;
 	}
 
-	private void PlayRandomEventSound(Vector3 pos)
+	private void PlayRandomEventSound( Vector3 pos )
 	{
-		if (PossibleSounds.Count < 1)
+		if ( PossibleSounds.Count < 1 )
 			return;
 
-		int max = PossibleSounds.Count-1;
+		int max = PossibleSounds.Count - 1;
 
 		var rnd = new Random();
 
@@ -82,7 +88,8 @@ public partial class JustAnotherGame
 
 		EventSoundsPlayed = 0;
 		// Wait until the player finished picking up trash.
-		while (player.State == JustAnotherPlayer.PlayerStates.PickupTrash) {
+		while ( player.State == JustAnotherPlayer.PlayerStates.PickupTrash )
+		{
 			StateTimer = 1;
 			await WaitStateTimer();
 		}
@@ -99,9 +106,11 @@ public partial class JustAnotherGame
 		await FirstNormalCustomer();
 		Sound.FromEntity( "customer-beep", player );
 		// Wait until player is done taking out trash.
-		while (player.State == JustAnotherPlayer.PlayerStates.TakeOutTrashBags) {
+		while ( player.State == JustAnotherPlayer.PlayerStates.TakeOutTrashBags )
+		{
 			// Randomly choose whether to play a sound or not.
-			if (ShouldPlaySound(1, 0.05f, player)) {
+			if ( ShouldPlaySound( 1, 0.05f, player ) )
+			{
 				PlayRandomEventSound( player.EyePosition );
 			}
 			StateTimer = 1;
@@ -120,9 +129,11 @@ public partial class JustAnotherGame
 
 		// initiate weird customer.
 
-		while (player.State == JustAnotherPlayer.PlayerStates.WashDishes) {
+		while ( player.State == JustAnotherPlayer.PlayerStates.WashDishes )
+		{
 			// Randomly choose whether to play a sound or not.
-			if (ShouldPlaySound(1, 0.05f, player)) {
+			if ( ShouldPlaySound( 1, 0.05f, player ) )
+			{
 				PlayRandomEventSound( player.EyePosition );
 			}
 			StateTimer = 1;
@@ -145,9 +156,11 @@ public partial class JustAnotherGame
 		await WaitUntilCustomerIsGone();
 		StaringCreep();
 
-		while (player.State == JustAnotherPlayer.PlayerStates.MopFloors) {
+		while ( player.State == JustAnotherPlayer.PlayerStates.MopFloors )
+		{
 			// Randomly choose whether to play a sound or not.
-			if (ShouldPlaySound(2, 0.05f, player)) {
+			if ( ShouldPlaySound( 2, 0.05f, player ) )
+			{
 				PlayRandomEventSound( player.EyePosition );
 			}
 			StateTimer = 1;
@@ -168,9 +181,11 @@ public partial class JustAnotherGame
 		// what's going on.
 		backDoor.TimeBeforeReset = -1;
 
-		while (player.State == JustAnotherPlayer.PlayerStates.FixIceCreamMachine) {
+		while ( player.State == JustAnotherPlayer.PlayerStates.FixIceCreamMachine )
+		{
 			// Randomly choose whether to play a sound or not.
-			if (ShouldPlaySound(1, 0.1f, player)) {
+			if ( ShouldPlaySound( 1, 0.1f, player ) )
+			{
 				PlayRandomEventSound( player.EyePosition );
 			}
 			StateTimer = 1;
@@ -185,7 +200,8 @@ public partial class JustAnotherGame
 		FreezerCreep();
 
 		// Wait until the player is dead pretty much.
-		while (player.State == JustAnotherPlayer.PlayerStates.OrganizeFreezer) {
+		while ( player.State == JustAnotherPlayer.PlayerStates.OrganizeFreezer )
+		{
 			StateTimer = 1;
 			await WaitStateTimer();
 		}
@@ -193,7 +209,8 @@ public partial class JustAnotherGame
 
 	private async Task WaitStateTimer()
 	{
-		while (StateTimer > 0) {
+		while ( StateTimer > 0 )
+		{
 			await Task.DelayRealtimeSeconds( 1.0f );
 		}
 

@@ -175,9 +175,8 @@
 	[
 		{
 			_class = "C_OP_RenderSprites"
-			m_bFogParticles = true
 			m_nOrientationType = 2
-			m_hTexture = resource:"textures/decal/decal_stain_a_color_tga_6ab17a75.generated.vtex"
+			m_hTexture = resource:"materials/textures/spill_1_png_ee9bf902.generated.vtex"
 			m_flAlphaScale = 
 			{
 				m_nType = "PF_TYPE_LITERAL"
@@ -424,13 +423,13 @@
 				}
 			}
 			m_nColorBlendType = "PARTICLE_COLOR_BLEND_REPLACE"
-			m_hNormalTexture = resource:"textures/decal/decal_stain_a_normal_tga_7cd5e098.generated.vtex"
 			m_bRefract = true
 			m_flRefractAmount = 
 			{
 				m_nType = "PF_TYPE_LITERAL"
 				m_nMapType = "PF_MAP_TYPE_DIRECT"
-				m_flLiteralValue = 0.8
+				m_NamedValue = ""
+				m_flLiteralValue = 0.2
 				m_nControlPoint = 0
 				m_nScalarAttribute = 3
 				m_nVectorAttribute = 6
@@ -471,6 +470,13 @@
 					m_vDomainMaxs = [ 0.0, 0.0 ]
 				}
 			}
+			m_bCannotBeRefracted = false
+			m_bOutline = true
+			m_OutlineColor = [ 160, 175, 134, 255 ]
+			m_nOutlineAlpha = 100
+			m_flOutlineStart0 = 0.0
+			m_nRefractBlurRadius = 3
+			m_nRefractBlurType = "BLURFILTER_GAUSSIAN"
 		},
 	]
 }

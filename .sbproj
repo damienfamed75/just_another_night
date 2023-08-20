@@ -7,25 +7,17 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "ResourcePaths": [
-    "/models/*",
-    "/models/prefabs/*",
-    "/models/creep/*",
-    "/models/empty_door/*",
-    "/anim/*",
-    "/images/*",
-    "/materials/*",
-    "/particles/*",
-    "/sounds/*",
-    "/fonts/*"
-  ],
+  "Resources": null,
+  "MenuResources": null,
   "HasCode": true,
   "CodePath": "/code/",
+  "PackageReferences": [],
+  "EditorReferences": null,
   "Metadata": {
     "MaxPlayers": 1,
     "MinPlayers": 1,
     "GameNetworkType": "Singleplayer",
-    "MapSelect": "Tagged",
+    "MapSelect": "Official",
     "MapList": [
       "gimlet.restaurant"
     ],
@@ -40,6 +32,21 @@
     "ParentPackage": "",
     "Summary": "My entry for the gvarados game jam",
     "Description": "WASD movement\n\nLeft click to interact\n\nLet me know if you encounter any bugs on Discord\nDamien#0812",
-    "Public": true
+    "Public": true,
+    "CsProjName": "",
+    "HttpAllowList": null,
+    "TickRate": 50,
+    "LaunchConfigs": [
+      {
+        "Name": "My New Config",
+        "GameIdent": "gimlet.a_night#local",
+        "MapName": "restaurant.vmap",
+        "MaxPlayers": 1,
+        "GameSettings": {},
+        "Addons": "",
+        "PreLaunchCommand": "",
+        "PostLaunchCommand": "sv_password wowee"
+      }
+    ]
   }
 }

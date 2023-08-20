@@ -1,0 +1,725 @@
+{
+  "Model": "models/tallbox.vmdl",
+  "Description": "",
+  "BlendMode": "Opaque",
+  "nodes": [
+    {
+      "_class": "Result",
+      "Albedo": {
+        "Identifier": "9",
+        "Output": "Result"
+      },
+      "Emission": {},
+      "Opacity": {},
+      "Normal": {},
+      "Roughness": {},
+      "Metalness": {},
+      "AmbientOcclusion": {},
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "112,-96"
+    },
+    {
+      "_class": "TextureSampler",
+      "Coords": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "Texture": "materials/textures/tallboxes_cardboard_png_76d0e463.generated.vtex",
+      "Sampler": {
+        "Filter": "Point"
+      },
+      "UI": {
+        "Name": "",
+        "Default": "1,1,1,1",
+        "SrgbRead": true,
+        "CreateInput": "CreateInputTexture2D"
+      },
+      "Identifier": "1",
+      "Position": "-480,-448"
+    },
+    {
+      "_class": "Divide",
+      "A": {
+        "Identifier": "4",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "5",
+        "Output": "XY"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "2",
+      "Position": "-640,-448"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "3",
+      "Position": "-1200,-496"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "3",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "5",
+        "Output": "XY"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "4",
+      "Position": "-944,-496"
+    },
+    {
+      "_class": "ScreenPosition",
+      "Identifier": "5",
+      "Position": "-1200,-400"
+    },
+    {
+      "_class": "ObjectPosition",
+      "Identifier": "6",
+      "Position": "-560,-192"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "10",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "26",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 0.02,
+      "Identifier": "7",
+      "Position": "-688,400"
+    },
+    {
+      "_class": "Add",
+      "A": {
+        "Identifier": "49",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "32",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "8",
+      "Position": "-320,-96"
+    },
+    {
+      "_class": "TextureSampler",
+      "Coords": {
+        "Identifier": "8",
+        "Output": "Result"
+      },
+      "Texture": "materials/textures/tallboxes_cardboard_png_76d0e463.generated.vtex",
+      "Sampler": {
+        "Filter": "Point"
+      },
+      "UI": {
+        "Name": "",
+        "Default": "1,1,1,1",
+        "SrgbRead": true,
+        "CreateInput": "CreateInputTexture2D"
+      },
+      "Identifier": "9",
+      "Position": "-80,-96"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "50",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "12",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "10",
+      "Position": "-864,336"
+    },
+    {
+      "_class": "ObjectPosition",
+      "Identifier": "11",
+      "Position": "-1104,304"
+    },
+    {
+      "_class": "Blend",
+      "A": {
+        "Identifier": "20",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "59",
+        "Output": "Result"
+      },
+      "C": {
+        "Identifier": "57",
+        "Output": "Z"
+      },
+      "Fraction": 0.5,
+      "BlendMode": "Mix",
+      "Clamp": true,
+      "Identifier": "12",
+      "Position": "-912,640"
+    },
+    {
+      "_class": "TileAndOffset",
+      "Coords": {
+        "Identifier": "51",
+        "Output": "Result"
+      },
+      "Tile": {
+        "Identifier": "14",
+        "Output": "Result"
+      },
+      "Offset": {
+        "Identifier": "31",
+        "Output": "Result"
+      },
+      "DefaultTile": "1,1",
+      "DefaultOffset": "0,0",
+      "WrapTo01": false,
+      "Identifier": "13",
+      "Position": "-1808,416"
+    },
+    {
+      "_class": "Float2",
+      "Value": "1,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "14",
+      "Position": "-2112,416"
+    },
+    {
+      "_class": "ObjectPosition",
+      "Identifier": "15",
+      "Position": "-2112,352"
+    },
+    {
+      "_class": "Add",
+      "A": {
+        "Identifier": "30",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "29",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "16",
+      "Position": "-2560,592"
+    },
+    {
+      "_class": "ViewDirection",
+      "Identifier": "17",
+      "Position": "-2720,160"
+    },
+    {
+      "_class": "WorldPosition",
+      "Identifier": "18",
+      "Position": "-3088,720"
+    },
+    {
+      "_class": "ScreenPosition",
+      "Identifier": "19",
+      "Position": "-2560,-336"
+    },
+    {
+      "_class": "SimplexNoise",
+      "Coords": {
+        "Identifier": "38",
+        "Output": "Result"
+      },
+      "Identifier": "20",
+      "Position": "-1136,864"
+    },
+    {
+      "_class": "Float3",
+      "Value": "0,0,0",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "21",
+      "Position": "-3088,800"
+    },
+    {
+      "_class": "ScreenPosition",
+      "Identifier": "22",
+      "Position": "-3104,400"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "23",
+      "Position": "-1696,256"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "23",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "28",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 100,
+      "Identifier": "24",
+      "Position": "-1488,256"
+    },
+    {
+      "_class": "Float3",
+      "Value": "0,0,0",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "25",
+      "Position": "-3104,544"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.0128339715,
+      "Name": "Vertex Jiggle",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "26",
+      "Position": "-896,464"
+    },
+    {
+      "_class": "Add",
+      "A": {
+        "Identifier": "13",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "24",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "27",
+      "Position": "-1376,256"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 100,
+      "Value": 100,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "28",
+      "Position": "-1696,320"
+    },
+    {
+      "_class": "Branch",
+      "True": {
+        "Identifier": "18",
+        "Output": "Result"
+      },
+      "False": {
+        "Identifier": "21",
+        "Output": "Result"
+      },
+      "A": {},
+      "B": {},
+      "Name": "Object Move Jiggle",
+      "Operator": "Equal",
+      "Enabled": true,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "29",
+      "Position": "-2864,720"
+    },
+    {
+      "_class": "Branch",
+      "True": {
+        "Identifier": "22",
+        "Output": "XYZ"
+      },
+      "False": {
+        "Identifier": "25",
+        "Output": "Result"
+      },
+      "A": {},
+      "B": {},
+      "Name": "Camera Move Jiggle",
+      "Operator": "Equal",
+      "Enabled": true,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "30",
+      "Position": "-2864,496"
+    },
+    {
+      "_class": "Reroute",
+      "Comment": "",
+      "Input": {
+        "Identifier": "16",
+        "Output": "Result"
+      },
+      "Identifier": "31",
+      "Position": "-1888,624"
+    },
+    {
+      "_class": "Branch",
+      "True": {
+        "Identifier": "33",
+        "Output": "Result"
+      },
+      "False": {
+        "Identifier": "7",
+        "Output": "Result"
+      },
+      "A": {
+        "Identifier": "36",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "37",
+        "Output": "Result"
+      },
+      "Name": "",
+      "Operator": "Equal",
+      "Enabled": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "32",
+      "Position": "-544,192"
+    },
+    {
+      "_class": "Float3",
+      "Value": "0,0,0",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "33",
+      "Position": "-832,16"
+    },
+    {
+      "_class": "Reroute",
+      "Comment": "",
+      "Input": {
+        "Identifier": "30",
+        "Output": "Result"
+      },
+      "Identifier": "34",
+      "Position": "-2432,144"
+    },
+    {
+      "_class": "Reroute",
+      "Comment": "",
+      "Input": {
+        "Identifier": "29",
+        "Output": "Result"
+      },
+      "Identifier": "35",
+      "Position": "-2416,176"
+    },
+    {
+      "_class": "Reroute",
+      "Comment": "",
+      "Input": {
+        "Identifier": "34",
+        "Output": "Result"
+      },
+      "Identifier": "36",
+      "Position": "-912,144"
+    },
+    {
+      "_class": "Reroute",
+      "Comment": "",
+      "Input": {
+        "Identifier": "35",
+        "Output": "Result"
+      },
+      "Identifier": "37",
+      "Position": "-912,176"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "13",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "39",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "38",
+      "Position": "-1360,544"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 100,
+      "Value": 0.008,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "39",
+      "Position": "-1584,608"
+    },
+    {
+      "_class": "Add",
+      "A": {
+        "Identifier": "48",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "41",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "40",
+      "Position": "576,-1104"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "44",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "43",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "41",
+      "Position": "432,-992"
+    },
+    {
+      "_class": "ObjectPosition",
+      "Identifier": "42",
+      "Position": "-256,-1104"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.488956,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "43",
+      "Position": "192,-864"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "45",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "46",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "44",
+      "Position": "256,-992"
+    },
+    {
+      "_class": "Normalize",
+      "Input": {
+        "Identifier": "48",
+        "Output": "Result"
+      },
+      "Identifier": "45",
+      "Position": "-0,-992"
+    },
+    {
+      "_class": "VoronoiNoise",
+      "Coords": {
+        "Identifier": "47",
+        "Output": "Result"
+      },
+      "A": {},
+      "B": {},
+      "AngleOffset": 1.8453447,
+      "CellDensity": 5.1638203,
+      "Worley": false,
+      "Identifier": "46",
+      "Position": "-48,-912"
+    },
+    {
+      "_class": "WorldPosition",
+      "Identifier": "47",
+      "Position": "-272,-864"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "48",
+      "Position": "-80,-1104"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "49",
+      "Position": "-560,-64"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "50",
+      "Position": "-1104,240"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "51",
+      "Position": "-2112,288"
+    },
+    {
+      "_class": "ValueNoise",
+      "Coords": {
+        "Identifier": "56",
+        "Output": "Result"
+      },
+      "Identifier": "52",
+      "Position": "-1136,432"
+    },
+    {
+      "_class": "ValueNoise",
+      "Coords": {
+        "Identifier": "54",
+        "Output": "Result"
+      },
+      "Identifier": "53",
+      "Position": "-1136,640"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "13",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "55",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "54",
+      "Position": "-1248,672"
+    },
+    {
+      "_class": "Float",
+      "Min": -1,
+      "Max": 100,
+      "Value": -0.005,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "55",
+      "Position": "-1456,736"
+    },
+    {
+      "_class": "Multiply",
+      "A": {
+        "Identifier": "13",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "58",
+        "Output": "Result"
+      },
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "56",
+      "Position": "-1360,416"
+    },
+    {
+      "_class": "ScreenPosition",
+      "Identifier": "57",
+      "Position": "-896,848"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 100,
+      "Value": 0.01,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": ""
+        }
+      },
+      "Identifier": "58",
+      "Position": "-1584,496"
+    },
+    {
+      "_class": "Saturate",
+      "Input": {
+        "Identifier": "52",
+        "Output": "Result"
+      },
+      "Identifier": "59",
+      "Position": "-912,560"
+    }
+  ]
+}

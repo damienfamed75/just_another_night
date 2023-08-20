@@ -1,67 +1,70 @@
 {
   "version": 3,
   "targets": {
-    "net6.0": {
-      "base/1.0.0": {
+    "net7.0": {
+      "Base Library/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
+        "framework": ".NETCoreApp,Version=v7.0",
         "compile": {
-          "bin/placeholder/base.dll": {}
+          "bin/placeholder/Base Library.dll": {}
         },
         "runtime": {
-          "bin/placeholder/base.dll": {}
+          "bin/placeholder/Base Library.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "base/1.0.0": {
+    "Base Library/1.0.0": {
       "type": "project",
-      "path": "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\base.csproj",
-      "msbuildProject": "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\base.csproj"
+      "path": "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\Base Library.csproj",
+      "msbuildProject": "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\Base Library.csproj"
     }
   },
   "projectFileDependencyGroups": {
-    "net6.0": [
-      "base >= 1.0.0"
+    "net7.0": [
+      "Base Library >= 1.0.0"
     ]
   },
   "packageFolders": {
     "C:\\Users\\damie\\.nuget\\packages\\": {},
+    "C:\\Users\\damie\\AppData\\Roaming\\Godot\\mono\\GodotNuGetFallbackFolder": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\users\\damie\\documents\\s&box projects\\just_another_night\\code\\just_another_night.csproj",
-      "projectName": "just_another_night",
-      "projectPath": "c:\\users\\damie\\documents\\s&box projects\\just_another_night\\code\\just_another_night.csproj",
+      "projectUniqueName": "c:\\users\\damie\\documents\\s&box projects\\just_another_night\\code\\a_night.csproj",
+      "projectName": "a_night",
+      "projectPath": "c:\\users\\damie\\documents\\s&box projects\\just_another_night\\code\\a_night.csproj",
       "packagesPath": "C:\\Users\\damie\\.nuget\\packages\\",
       "outputPath": "c:\\users\\damie\\documents\\s&box projects\\just_another_night\\code\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
+        "C:\\Users\\damie\\AppData\\Roaming\\Godot\\mono\\GodotNuGetFallbackFolder",
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
         "C:\\Users\\damie\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\damie\\AppData\\Roaming\\NuGet\\config\\Godot.Offline.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net6.0"
+        "net7.0"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "projectReferences": {
-            "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\base.csproj": {
-              "projectPath": "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\base.csproj"
+            "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\Base Library.csproj": {
+              "projectPath": "Z:\\Steam\\steamapps\\common\\sbox\\addons\\base\\code\\Base Library.csproj"
             }
           }
         }
@@ -73,8 +76,8 @@
       }
     },
     "frameworks": {
-      "net6.0": {
-        "targetAlias": "net6.0",
+      "net7.0": {
+        "targetAlias": "net7.0",
         "imports": [
           "net461",
           "net462",
@@ -91,7 +94,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

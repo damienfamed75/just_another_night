@@ -2,41 +2,21 @@
 
 Layer0
 {
-	shader "shaders/complex.shader"
+	shader "shaders/affine.shader_c"
 
-	//---- Ambient Occlusion ----
-	g_flAmbientOcclusionDirectDiffuse "0.000"
-	g_flAmbientOcclusionDirectSpecular "0.000"
-	TextureAmbientOcclusion "materials/default/default_ao.tga"
+	//---- Z-Buffering ----
+	F_DISABLE_Z_PREPASS 1
 
-	//---- Color ----
-	g_flModelTintAmount "1.000"
-	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
-	TextureColor "materials/textures/tallboxes_cardboard.png"
-
-	//---- Fade ----
-	g_flFadeExponent "1.000"
+	g_bCameraMoveJiggle "0"
+	g_bObjectMoveJiggle "0"
+	g_flVertexJiggle "0.000"
+	Texture "materials/textures/tallboxes_cardboard.png"
 
 	//---- Fog ----
-	g_bFogEnabled "1"
+	g_bFogEnabled "0"
 
-	//---- Lighting ----
-	g_flDirectionalLightmapMinZ "0.050"
-	g_flDirectionalLightmapStrength "1.000"
-
-	//---- Metalness ----
-	g_flMetalness "0.000"
-
-	//---- Normal ----
-	TextureNormal "materials/default/default_normal.tga"
-
-	//---- Roughness ----
-	TextureRoughness "materials/default/default_rough.tga"
-
-	//---- Texture Coordinates ----
-	g_nScaleTexCoordUByModelScaleAxis "0"
-	g_nScaleTexCoordVByModelScaleAxis "0"
-	g_vTexCoordOffset "[0.000 0.000]"
-	g_vTexCoordScale "[1.000 1.000]"
-	g_vTexCoordScrollSpeed "[0.000 0.000]"
+	//---- Go Back Settings ----
+	g_flAffineAmount "0.656"
+	g_flSnapScale "2.000"
+	g_RoundToDecimalPlace "0"
 }
